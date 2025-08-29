@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
   loadLastAyah();
   setupEventListeners();
   startTimer(); // Start the timer on popup load
+  
+  // Test background script connection
+  testBackgroundConnection();
 });
 
 // Set up event listeners
@@ -199,3 +202,14 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     loadLastAyah();
   }
 });
+
+// Test background script connection
+async function testBackgroundConnection() {
+  try {
+    console.log('Testing background script connection...');
+    const response = await chrome.runtime.sendMessage({ action: 'testConnection' });
+    console.log('Background connection test response:', response);
+  } catch (error) {
+    console.error('Background connection test failed:', error);
+  }
+}

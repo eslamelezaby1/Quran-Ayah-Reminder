@@ -125,6 +125,8 @@ async function scheduleAyahAlarm() {
 // Check if we need a new ayah and get one if needed
 async function getNewAyahIfNeeded(force = false) {
   try {
+    console.log(`getNewAyahIfNeeded called with force=${force}`);
+    
     const result = await chrome.storage.sync.get(['lastAyah', 'lastAyahTime', 'interval']);
     const lastAyah = result.lastAyah;
     const lastAyahTime = result.lastAyahTime;
@@ -144,6 +146,7 @@ async function getNewAyahIfNeeded(force = false) {
       
       if (newAyah) {
         // Save new ayah with timestamp
+        console.log('Saving new ayah to storage:', newAyah.surah, newAyah.ayah);
         await chrome.storage.sync.set({ 
           lastAyah: newAyah,
           lastAyahTime: now
@@ -152,6 +155,7 @@ async function getNewAyahIfNeeded(force = false) {
         return newAyah;
       } else {
         // Fallback to embedded ayat
+        console.log('API failed, using fallback ayah');
         const fallbackAyah = getRandomFallbackAyah();
         await chrome.storage.sync.set({ 
           lastAyah: fallbackAyah,
