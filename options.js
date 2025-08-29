@@ -31,7 +31,7 @@ async function loadCurrentSettings() {
     if (result) {
       // Set interval select
       const intervalSelect = document.getElementById('intervalSelect');
-      intervalSelect.value = result.interval || 60;
+      intervalSelect.value = result.interval || 10;
     }
   } catch (error) {
     console.error('Error loading settings:', error);
@@ -104,8 +104,8 @@ async function saveSettings(event) {
     const interval = parseInt(document.getElementById('intervalSelect').value);
     
     // Validate interval
-    if (interval < 15 || interval > 180) {
-      showMessage('Please select a valid interval between 15 and 180 minutes.', 'error');
+    if (interval < 10 || interval > 180) {
+      showMessage('Please select a valid interval between 10 and 180 minutes.', 'error');
       return;
     }
     

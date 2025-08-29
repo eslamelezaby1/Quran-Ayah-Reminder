@@ -37,7 +37,7 @@ const FALLBACK_AYAT = [
 
 // Default settings
 const DEFAULT_SETTINGS = {
-  interval: 60 // minutes
+  interval: 10 // minutes
 };
 
 // Track used ayahs to avoid repetition
