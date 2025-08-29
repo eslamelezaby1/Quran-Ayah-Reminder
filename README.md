@@ -5,11 +5,11 @@ A beautiful Chrome extension that reminds you of Allah's words throughout your d
 ## ✨ Features
 
 - **🕒 Time-Based Ayah Rotation**: Ayahs automatically change based on your chosen time interval (15 minutes to 3 hours)
-- **📱 Beautiful Notifications**: Receive beautiful notifications with Arabic text and optional English translations
+- **📱 Beautiful Notifications**: Receive beautiful notifications with Arabic text
 - **🔄 Manual Control**: Force a new ayah anytime with the "New Ayah" button
 - **⏰ Countdown Timer**: See exactly when the next ayah will be available
 - **🌐 Online Integration**: Fetches fresh ayahs from the Quran API with fallback to embedded verses
-- **⚙️ Customizable Settings**: Choose your preferred reminder interval and translation preferences
+- **⚙️ Customizable Settings**: Choose your preferred reminder interval
 - **🔗 Quick Access**: Click notifications to open ayahs directly on Quran.com
 
 ## 🚀 How It Works
@@ -47,10 +47,6 @@ A beautiful Chrome extension that reminds you of Allah's words throughout your d
 - **120 minutes**: Every 2 hours
 - **180 minutes**: Every 3 hours
 
-### Translation Options
-- **Arabic Only**: Show only the Arabic text
-- **With Translation**: Include English translation from Sahih International
-
 ## 🔧 Technical Details
 
 ### Architecture
@@ -62,7 +58,6 @@ A beautiful Chrome extension that reminds you of Allah's words throughout your d
 ### API Integration
 - **Primary Source**: [AlQuran Cloud API](https://alquran.cloud/api) for fresh ayahs
 - **Fallback System**: Embedded fallback ayat if API fails
-- **Translation Support**: English translations from Sahih International
 
 ### Time Management
 - **Interval Tracking**: Uses Chrome alarms for precise timing
@@ -108,7 +103,7 @@ A beautiful Chrome extension that reminds you of Allah's words throughout your d
 
 ### Previous Features
 - ✅ Automatic notifications at set intervals
-- ✅ Arabic text with optional English translations
+- ✅ Arabic text
 - ✅ Click notifications to open on Quran.com
 - ✅ Customizable reminder intervals
 - ✅ Fallback ayat system
@@ -124,7 +119,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- Quran translations provided by [Sahih International](https://quran.com/sahih)
 - API services by [AlQuran Cloud](https://alquran.cloud)
 - Built with love for the Muslim community
 

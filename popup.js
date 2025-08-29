@@ -125,7 +125,6 @@ async function loadLastAyah() {
       lastAyahInfo.innerHTML = `
         <div class="ayah-text">
           <p class="arabic-text">${lastAyah.text}</p>
-          ${lastAyah.translation ? `<p class="translation">${lastAyah.translation}</p>` : ''}
           <p class="reference">${lastAyah.surah} ${lastAyah.ayah}</p>
         </div>
       `;

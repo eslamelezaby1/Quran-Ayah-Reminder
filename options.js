@@ -32,10 +32,6 @@ async function loadCurrentSettings() {
       // Set interval select
       const intervalSelect = document.getElementById('intervalSelect');
       intervalSelect.value = result.interval || 60;
-      
-      // Set translation checkbox
-      const showTranslation = document.getElementById('showTranslation');
-      showTranslation.checked = result.showTranslation || false;
     }
   } catch (error) {
     console.error('Error loading settings:', error);
@@ -106,7 +102,6 @@ async function saveSettings(event) {
   try {
     // Get form values
     const interval = parseInt(document.getElementById('intervalSelect').value);
-    const showTranslation = document.getElementById('showTranslation').checked;
     
     // Validate interval
     if (interval < 15 || interval > 180) {
@@ -116,8 +111,7 @@ async function saveSettings(event) {
     
     // Prepare settings object
     const settings = {
-      interval: interval,
-      showTranslation: showTranslation
+      interval: interval
     };
     
     // Save to storage
@@ -223,7 +217,7 @@ function showMessage(message, type = 'info') {
 
 // Listen for storage changes to update form
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === 'sync' && (changes.interval || changes.showTranslation)) {
+  if (namespace === 'sync' && (changes.interval)) {
     loadCurrentSettings();
   }
 });
