@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quran Ayah Reminder - Options</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="options-container">
+    <div class="header">
+      <h1>⚙️ Quran Ayah Reminder Options</h1>
+      <p class="subtitle">Configure your reminder settings</p>
+    </div>
+    
+    <div class="content">
+      <form id="optionsForm">
+        <div class="form-group">
+          <label for="intervalSelect">Reminder Interval:</label>
+          <select id="intervalSelect" name="interval" required>
+            <option value="15">Every 15 minutes</option>
+            <option value="30">Every 30 minutes</option>
+            <option value="45">Every 45 minutes</option>
+            <option value="60" selected>Every 60 minutes</option>
+            <option value="120">Every 2 hours</option>
+            <option value="180">Every 3 hours</option>
+          </select>
+          <p class="help-text">Choose how often you want to receive Quran ayah reminders</p>
+        </div>
+        
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="showTranslation" name="showTranslation">
+            <span class="checkmark"></span>
+            Show English translation in notifications
+          </label>
+          <p class="help-text">When enabled, notifications will include both Arabic text and English translation</p>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            💾 Save Settings
+          </button>
+          <button type="button" id="testBtn" class="btn btn-secondary">
+            🧪 Test Notification
+          </button>
+        </div>
+      </form>
+      
+      <div class="info-section">
+        <h3>ℹ️ How it works</h3>
+        <ul>
+          <li>Notifications are sent automatically based on your chosen interval</li>
+          <li>Clicking a notification opens the ayah on Quran.com</li>
+          <li>If the online API fails, the extension uses embedded fallback ayat</li>
+          <li>Settings are automatically saved and synced across devices</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <a href="#" id="backToExtension">← Back to Extension</a>
+    </div>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Quran Ayah Reminder",
+  "version": "1.0.0",
+  "description": "Shows random Quran ayah notifications periodically to remind you of Allah's words",
+  "permissions": [
+    "notifications",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://api.alquran.cloud/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Quran Ayah Reminder",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  }
+}
