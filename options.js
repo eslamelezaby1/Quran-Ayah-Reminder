@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize options page
   loadCurrentSettings();
   setupEventListeners();
+  startNextAyahTimer();
 });
 
 // Set up event listeners
@@ -38,6 +39,63 @@ async function loadCurrentSettings() {
     }
   } catch (error) {
     console.error('Error loading settings:', error);
+  }
+}
+
+// Start timer to show when next ayah will be available
+function startNextAyahTimer() {
+  // Update timer every second
+  setInterval(async () => {
+    try {
+      const result = await chrome.storage.sync.get(['lastAyahTime', 'interval']);
+      const lastAyahTime = result.lastAyahTime;
+      const interval = result.interval || 60;
+      
+      if (lastAyahTime) {
+        updateNextAyahTimer(lastAyahTime, interval);
+      }
+    } catch (error) {
+      console.error('Error updating next ayah timer:', error);
+    }
+  }, 1000);
+}
+
+// Update the next ayah timer display
+function updateNextAyahTimer(lastAyahTime, interval) {
+  const now = Date.now();
+  const timeSinceLastAyah = now - lastAyahTime;
+  const intervalMs = interval * 60 * 1000; // Convert minutes to milliseconds
+  const timeRemaining = Math.max(0, intervalMs - timeSinceLastAyah);
+  
+  // Find or create the timer display element
+  let timerElement = document.getElementById('nextAyahTimer');
+  if (!timerElement) {
+    // Create timer display if it doesn't exist
+    const infoSection = document.querySelector('.info-section');
+    if (infoSection) {
+      timerElement = document.createElement('div');
+      timerElement.id = 'nextAyahTimer';
+      timerElement.className = 'next-ayah-timer';
+      timerElement.innerHTML = '<h3>⏰ Next Ayah</h3><p>Next ayah will be available in: <span id="nextAyahTimeRemaining">--</span></p>';
+      infoSection.appendChild(timerElement);
+    }
+  }
+  
+  if (timerElement) {
+    const timeRemainingElement = timerElement.querySelector('#nextAyahTimeRemaining');
+    if (timeRemainingElement) {
+      if (timeRemaining <= 0) {
+        timeRemainingElement.textContent = 'Now!';
+        timeRemainingElement.style.color = '#e74c3c';
+        timeRemainingElement.style.fontWeight = '700';
+      } else {
+        const minutes = Math.floor(timeRemaining / 60000);
+        const seconds = Math.floor((timeRemaining % 60000) / 1000);
+        timeRemainingElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        timeRemainingElement.style.color = '#2980b9';
+        timeRemainingElement.style.fontWeight = '500';
+      }
+    }
   }
 }
 

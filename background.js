@@ -54,8 +54,9 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     // Set default settings
     await chrome.storage.sync.set(DEFAULT_SETTINGS);
     
-    // Schedule first alarm
+    // Schedule first alarm and get initial ayah
     await scheduleAyahAlarm();
+    await getNewAyahIfNeeded();
   }
 });
 
@@ -98,6 +99,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: true });
     });
     return true;
+  } else if (request.action === 'forceNewAyah') {
+    getNewAyahIfNeeded(true);
+    sendResponse({ success: true });
   }
 });
 
@@ -118,30 +122,81 @@ async function scheduleAyahAlarm() {
   console.log(`Ayah alarm scheduled for every ${interval} minutes`);
 }
 
+// Check if we need a new ayah and get one if needed
+async function getNewAyahIfNeeded(force = false) {
+  try {
+    const result = await chrome.storage.sync.get(['lastAyah', 'lastAyahTime', 'interval']);
+    const lastAyah = result.lastAyah;
+    const lastAyahTime = result.lastAyahTime;
+    const interval = result.interval || DEFAULT_SETTINGS.interval;
+    
+    const now = Date.now();
+    const timeSinceLastAyah = lastAyahTime ? (now - lastAyahTime) : Infinity;
+    const intervalMs = interval * 60 * 1000; // Convert minutes to milliseconds
+    
+    // Get new ayah if:
+    // 1. Force is true (manual request)
+    // 2. No ayah exists yet
+    // 3. Enough time has passed since last ayah
+    if (force || !lastAyah || timeSinceLastAyah >= intervalMs) {
+      console.log('Getting new ayah...');
+      const newAyah = await fetchRandomAyah();
+      
+      if (newAyah) {
+        // Save new ayah with timestamp
+        await chrome.storage.sync.set({ 
+          lastAyah: newAyah,
+          lastAyahTime: now
+        });
+        console.log(`New ayah set: ${newAyah.surah} ${newAyah.ayah}`);
+        return newAyah;
+      } else {
+        // Fallback to embedded ayat
+        const fallbackAyah = getRandomFallbackAyah();
+        await chrome.storage.sync.set({ 
+          lastAyah: fallbackAyah,
+          lastAyahTime: now
+        });
+        console.log(`Fallback ayah set: ${fallbackAyah.surah} ${fallbackAyah.ayah}`);
+        return fallbackAyah;
+      }
+    } else {
+      // Use existing ayah
+      console.log('Using existing ayah, time not elapsed yet');
+      return lastAyah;
+    }
+  } catch (error) {
+    console.error('Error in getNewAyahIfNeeded:', error);
+    
+    // Fallback to embedded ayat
+    const fallbackAyah = getRandomFallbackAyah();
+    await chrome.storage.sync.set({ 
+      lastAyah: fallbackAyah,
+      lastAyahTime: Date.now()
+    });
+    return fallbackAyah;
+  }
+}
+
 // Send ayah notification
 async function sendAyahNotification(isTest = false) {
   try {
-    // Try to fetch random ayah from API
-    const ayah = await fetchRandomAyah();
+    // Get current ayah (or new one if needed)
+    const ayah = await getNewAyahIfNeeded();
     
     if (ayah) {
-      // Save to storage
-      await chrome.storage.sync.set({ lastAyah: ayah });
-      
       // Show notification
       await showAyahNotification(ayah, isTest);
-    } else {
-      // Fallback to embedded ayat
-      const fallbackAyah = getRandomFallbackAyah();
-      await chrome.storage.sync.set({ lastAyah: fallbackAyah });
-      await showAyahNotification(fallbackAyah, isTest);
     }
   } catch (error) {
     console.error('Error sending ayah notification:', error);
     
     // Fallback to embedded ayat
     const fallbackAyah = getRandomFallbackAyah();
-    await chrome.storage.sync.set({ lastAyah: fallbackAyah });
+    await chrome.storage.sync.set({ 
+      lastAyah: fallbackAyah,
+      lastAyahTime: Date.now()
+    });
     await showAyahNotification(fallbackAyah, isTest);
   }
 }

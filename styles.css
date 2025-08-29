@@ -1,7 +1,5 @@
 /* Quran Ayah Reminder - Styles */
-/* Clean, modern styling for popup and options pages */
 
-/* Reset and base styles */
 * {
   margin: 0;
   padding: 0;
@@ -16,37 +14,50 @@ body {
   background: #f8f9fa;
 }
 
-/* Common container styles */
-.popup-container,
-.options-container {
-  width: 350px;
-  min-height: 400px;
+/* Popup container */
+.container {
+  width: 380px;
+  min-height: 500px;
   background: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
+/* Options container */
 .options-container {
   width: 100%;
   max-width: 600px;
   min-height: auto;
   margin: 20px auto;
   padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 /* Header styles */
 .header {
-  background: linear-gradient(135deg, #2c5aa0 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 20px;
+  padding: 24px;
   text-align: center;
 }
 
+.options-container .header {
+  border-radius: 12px 12px 0 0;
+}
+
 .header h1 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 5px;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.header p {
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 400;
 }
 
 .subtitle {
@@ -57,7 +68,7 @@ body {
 
 /* Content styles */
 .content {
-  padding: 20px;
+  padding: 24px;
 }
 
 /* Form styles */
@@ -96,7 +107,6 @@ body {
   line-height: 1.4;
 }
 
-/* Checkbox styles */
 .checkbox-label {
   display: flex;
   align-items: center;
@@ -114,17 +124,16 @@ body {
 
 /* Button styles */
 .btn {
-  display: inline-block;
-  padding: 10px 16px;
+  padding: 14px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   text-align: center;
-  min-width: 100px;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .btn:disabled {
@@ -133,24 +142,34 @@ body {
 }
 
 .btn-primary {
-  background: #3b82f6;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 .btn-secondary {
-  background: #6b7280;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   color: white;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #4b5563;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(240, 147, 251, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
 }
 
 /* Form actions */
@@ -161,85 +180,82 @@ body {
   margin-bottom: 25px;
 }
 
-/* Last ayah section */
-.last-ayah-section {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
+/* Ayah section styles */
+.ayah-section {
+  padding: 24px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.last-ayah-section h3 {
-  font-size: 14px;
+.ayah-section h2 {
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 12px;
-  color: #374151;
+  margin-bottom: 16px;
+  color: #333;
 }
 
-.last-ayah-info {
-  min-height: 60px;
+.ayah-info {
+  margin-bottom: 16px;
 }
 
-.loading {
-  color: #6b7280;
-  font-style: italic;
-}
-
-.no-ayah {
-  color: #6b7280;
-  text-align: center;
-  font-style: italic;
-}
-
-.error {
-  color: #dc2626;
-  text-align: center;
-}
-
-/* Ayah text styles */
 .ayah-text {
-  text-align: center;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  border-left: 4px solid #667eea;
 }
 
 .arabic-text {
   font-size: 18px;
   line-height: 1.8;
-  margin-bottom: 10px;
-  color: #1f2937;
-  font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+  text-align: right;
+  direction: rtl;
+  margin-bottom: 12px;
+  color: #2c3e50;
+  font-weight: 500;
 }
 
 .translation {
-  font-size: 13px;
-  line-height: 1.5;
-  margin-bottom: 8px;
-  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 12px;
   font-style: italic;
 }
 
 .reference {
   font-size: 12px;
-  color: #6b7280;
+  color: #667eea;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Timer styles */
+.ayah-timer {
+  background: #e8f4fd;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #b3d9f2;
+}
+
+.ayah-timer p {
+  font-size: 14px;
+  color: #2980b9;
   font-weight: 500;
 }
 
-/* Footer styles */
-.footer {
-  padding: 15px 20px;
-  border-top: 1px solid #e5e7eb;
-  text-align: center;
+#timeRemaining {
+  font-weight: 700;
+  color: #e74c3c;
 }
 
-.footer a {
-  color: #6b7280;
-  text-decoration: none;
-  font-size: 13px;
-  transition: color 0.2s;
-}
-
-.footer a:hover {
-  color: #374151;
+/* Actions section */
+.actions {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* Info section */
@@ -280,37 +296,119 @@ body {
   font-weight: bold;
 }
 
+/* Next ayah timer */
+.next-ayah-timer {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+}
+
+.next-ayah-timer h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #0369a1;
+}
+
+.next-ayah-timer p {
+  font-size: 13px;
+  color: #0c4a6e;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.next-ayah-timer span {
+  font-weight: 600;
+}
+
+/* Footer styles */
+.footer {
+  padding: 20px 24px;
+  background: #f8f9fa;
+  text-align: center;
+  border-top: 1px solid #f0f0f0;
+}
+
+.footer p {
+  font-size: 12px;
+  color: #666;
+  font-weight: 400;
+}
+
+.footer a {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+
+.footer a:hover {
+  color: #5a67d8;
+}
+
 /* Message styles */
 .message {
-  padding: 12px 20px;
-  margin: 0 20px 20px 20px;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 12px 16px;
+  margin: 16px 24px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 500;
 }
 
 .message-success {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 .message-error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 .message-info {
-  background: #dbeafe;
-  color: #1e40af;
-  border: 1px solid #93c5fd;
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+/* Loading and error states */
+.loading {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.no-ayah {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+}
+
+.error {
+  text-align: center;
+  color: #e74c3c;
+  font-weight: 500;
 }
 
 /* Responsive adjustments */
 @media (max-width: 400px) {
-  .popup-container {
-    width: 320px;
+  .container {
+    width: 100%;
+    border-radius: 0;
+  }
+  
+  .header, .ayah-section, .actions, .footer {
+    padding: 20px;
+  }
+  
+  .options-container {
+    margin: 10px;
+    border-radius: 8px;
   }
   
   .form-actions {
@@ -320,22 +418,4 @@ body {
   .btn {
     width: 100%;
   }
-}
-
-/* Animation for buttons */
-.btn {
-  transform: translateY(0);
-  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-/* Focus styles for accessibility */
-.btn:focus,
-select:focus,
-input:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
 }
