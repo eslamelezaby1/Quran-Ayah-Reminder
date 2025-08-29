@@ -245,6 +245,52 @@ async function fetchRandomAyah() {
   }
 }
 
+// Fetch popular ayahs (like Ayat Al-Kursi)
+async function fetchPopularAyah(ayahType = 'random') {
+  try {
+    const popularAyahs = {
+      'kursi': '2:255',      // Ayat Al-Kursi
+      'fatiha': '1:1',       // Al-Fatiha first verse
+      'nasr': '110:1',       // Al-Nasr first verse
+      'ikhlas': '112:1',     // Al-Ikhlas first verse
+      'falaq': '113:1',      // Al-Falaq first verse
+      'nas': '114:1'         // Al-Nas first verse
+    };
+    
+    const reference = popularAyahs[ayahType] || popularAyahs['random'];
+    console.log(`Fetching popular ayah: ${ayahType} (${reference})`);
+    
+    // Get settings
+    const result = await chrome.storage.sync.get(['showTranslation']);
+    const showTranslation = result.showTranslation || false;
+    
+    if (showTranslation) {
+      // Try to get both Arabic text and translation in one request
+      return await fetchAyahWithEditions(reference, ['quran-uthmani', 'en.sahih']);
+    } else {
+      // Just get Arabic text
+      const response = await fetch(`https://api.alquran.cloud/v1/ayah/${reference}`);
+      if (!response.ok) {
+        throw new Error(`API response not ok: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      const ayah = data.data;
+      
+      return {
+        text: ayah.text,
+        translation: '',
+        surah: ayah.surah.name,
+        ayah: ayah.numberInSurah,
+        number: ayah.number
+      };
+    }
+  } catch (error) {
+    console.error(`Error fetching popular ayah ${ayahType}:`, error);
+    return null;
+  }
+}
+
 // Get random fallback ayah
 function getRandomFallbackAyah() {
   const randomIndex = Math.floor(Math.random() * FALLBACK_AYAT.length);
