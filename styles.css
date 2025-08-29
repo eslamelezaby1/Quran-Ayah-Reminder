@@ -14,15 +14,215 @@ body {
   background: #f8f9fa;
 }
 
-/* Popup container */
+/* ===== POPUP STYLES ===== */
+
+/* Popup container - Optimized for Chrome popup */
 .container {
-  width: 380px;
-  min-height: 500px;
+  width: 350px;
+  min-height: 450px;
+  max-height: 600px;
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Popup header */
+.container .header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.container .header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.container .header p {
+  font-size: 13px;
+  opacity: 0.9;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+/* Popup ayah section */
+.container .ayah-section {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.container .ayah-section h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.container .ayah-info {
+  margin-bottom: 12px;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
+
+.container .ayah-text {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 14px;
+  border-left: 4px solid #667eea;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+.container .arabic-text {
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: right;
+  direction: rtl;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  font-weight: 500;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+}
+
+.container .translation {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #666;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.container .reference {
+  font-size: 11px;
+  color: #667eea;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: auto;
+}
+
+/* Popup timer */
+.container .ayah-timer {
+  background: #e8f4fd;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #b3d9f2;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.container .ayah-timer p {
+  font-size: 13px;
+  color: #2980b9;
+  font-weight: 500;
+  margin: 0;
+}
+
+.container #timeRemaining {
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+/* Popup actions */
+.container .actions {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.container .btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  min-height: 44px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.container .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.container .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.container .btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.container .btn-secondary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.container .btn-secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);
+}
+
+.container .btn-outline {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.container .btn-outline:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+/* Popup footer */
+.container .footer {
+  padding: 16px 20px;
+  background: #f8f9fa;
+  text-align: center;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.container .footer p {
+  font-size: 11px;
+  color: #666;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* ===== OPTIONS PAGE STYLES ===== */
 
 /* Options container */
 .options-container {
@@ -36,25 +236,22 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
-/* Header styles */
-.header {
+/* Options header */
+.options-container .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 24px;
   text-align: center;
-}
-
-.options-container .header {
   border-radius: 12px 12px 0 0;
 }
 
-.header h1 {
+.options-container .header h1 {
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 8px;
 }
 
-.header p {
+.options-container .header p {
   font-size: 14px;
   opacity: 0.9;
   font-weight: 400;
@@ -66,7 +263,7 @@ body {
   font-weight: 400;
 }
 
-/* Content styles */
+/* Options content */
 .content {
   padding: 24px;
 }
@@ -122,8 +319,8 @@ body {
   accent-color: #3b82f6;
 }
 
-/* Button styles */
-.btn {
+/* Options buttons */
+.options-container .btn {
   padding: 14px 20px;
   border: none;
   border-radius: 8px;
@@ -134,42 +331,32 @@ body {
   text-align: center;
   text-decoration: none;
   display: inline-block;
+  min-width: 100px;
 }
 
-.btn:disabled {
+.options-container .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.btn-primary {
+.options-container .btn-primary {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
+.options-container .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
-.btn-secondary {
+.options-container .btn-secondary {
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   color: white;
 }
 
-.btn-secondary:hover:not(:disabled) {
+.options-container .btn-secondary:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(240, 147, 251, 0.3);
-}
-
-.btn-outline {
-  background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
-}
-
-.btn-outline:hover:not(:disabled) {
-  background: #667eea;
-  color: white;
 }
 
 /* Form actions */
@@ -178,84 +365,6 @@ body {
   gap: 12px;
   margin-top: 25px;
   margin-bottom: 25px;
-}
-
-/* Ayah section styles */
-.ayah-section {
-  padding: 24px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.ayah-section h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: #333;
-}
-
-.ayah-info {
-  margin-bottom: 16px;
-}
-
-.ayah-text {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 16px;
-  border-left: 4px solid #667eea;
-}
-
-.arabic-text {
-  font-size: 18px;
-  line-height: 1.8;
-  text-align: right;
-  direction: rtl;
-  margin-bottom: 12px;
-  color: #2c3e50;
-  font-weight: 500;
-}
-
-.translation {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 12px;
-  font-style: italic;
-}
-
-.reference {
-  font-size: 12px;
-  color: #667eea;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Timer styles */
-.ayah-timer {
-  background: #e8f4fd;
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-  border: 1px solid #b3d9f2;
-}
-
-.ayah-timer p {
-  font-size: 14px;
-  color: #2980b9;
-  font-weight: 500;
-}
-
-#timeRemaining {
-  font-weight: 700;
-  color: #e74c3c;
-}
-
-/* Actions section */
-.actions {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
 /* Info section */
@@ -323,35 +432,37 @@ body {
   font-weight: 600;
 }
 
-/* Footer styles */
-.footer {
+/* Options footer */
+.options-container .footer {
   padding: 20px 24px;
   background: #f8f9fa;
   text-align: center;
   border-top: 1px solid #f0f0f0;
 }
 
-.footer p {
+.options-container .footer p {
   font-size: 12px;
   color: #666;
   font-weight: 400;
 }
 
-.footer a {
+.options-container .footer a {
   color: #667eea;
   text-decoration: none;
   font-size: 13px;
   transition: color 0.2s;
 }
 
-.footer a:hover {
+.options-container .footer a:hover {
   color: #5a67d8;
 }
+
+/* ===== SHARED STYLES ===== */
 
 /* Message styles */
 .message {
   padding: 12px 16px;
-  margin: 16px 24px;
+  margin: 16px 20px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -380,6 +491,7 @@ body {
   text-align: center;
   color: #666;
   font-style: italic;
+  padding: 20px;
 }
 
 .no-ayah {
@@ -393,19 +505,47 @@ body {
   text-align: center;
   color: #e74c3c;
   font-weight: 500;
+  padding: 20px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 400px) {
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Popup responsive */
+@media (max-width: 380px) {
   .container {
-    width: 100%;
+    width: 100% !important;
+    min-width: 320px;
     border-radius: 0;
   }
   
-  .header, .ayah-section, .actions, .footer {
-    padding: 20px;
+  .container .header h1 {
+    font-size: 18px;
   }
   
+  .container .header p {
+    font-size: 12px;
+  }
+  
+  .container .ayah-section h2 {
+    font-size: 15px;
+  }
+  
+  .container .arabic-text {
+    font-size: 15px;
+  }
+  
+  .container .translation {
+    font-size: 12px;
+  }
+  
+  .container .btn {
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+}
+
+/* Options responsive */
+@media (max-width: 400px) {
   .options-container {
     margin: 10px;
     border-radius: 8px;
@@ -415,7 +555,7 @@ body {
     flex-direction: column;
   }
   
-  .btn {
+  .options-container .btn {
     width: 100%;
   }
 }
