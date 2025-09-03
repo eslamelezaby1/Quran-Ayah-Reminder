@@ -5,36 +5,22 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize popup
   loadLastAyah();
   setupEventListeners();
-  startTimer();
   
   // Test background script connection
   testBackgroundConnection();
-  
-  // Check extension status
-  checkExtensionStatus();
-  
-  // Check for wake-up when popup opens
-  checkWakeUp();
   
   // Listen for visibility changes (when system wakes up)
   document.addEventListener('visibilitychange', function() {
     if (!document.hidden) {
       console.log('Popup became visible, checking for wake-up...');
       checkWakeUp();
-      checkExtensionStatus();
     }
   });
 });
 
 // Set up event listeners
 function setupEventListeners() {
-  // Send ayah now button
-  const sendNowBtn = document.getElementById('sendNowBtn');
-  if (sendNowBtn) {
-    sendNowBtn.addEventListener('click', sendAyahNow);
-  }
-  
-  // New ayah button
+  // New ayah button (only visible button)
   const newAyahBtn = document.getElementById('newAyahBtn');
   if (newAyahBtn) {
     newAyahBtn.addEventListener('click', forceNewAyah);
@@ -44,18 +30,6 @@ function setupEventListeners() {
   const optionsBtn = document.getElementById('optionsBtn');
   if (optionsBtn) {
     optionsBtn.addEventListener('click', openOptions);
-  }
-  
-  // Debug button (only if element exists)
-  const debugBtn = document.getElementById('debugBtn');
-  if (debugBtn) {
-    debugBtn.addEventListener('click', debugAlarms);
-  }
-  
-  // Storage debug button (only if element exists)
-  const storageDebugBtn = document.getElementById('storageDebugBtn');
-  if (storageDebugBtn) {
-    storageDebugBtn.addEventListener('click', debugStorage);
   }
 }
 

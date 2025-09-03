@@ -298,7 +298,7 @@ body {
   gap: 8px;
   flex-shrink: 0;
   background: #FEFBE1;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .container .btn {
@@ -312,11 +312,11 @@ body {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  flex: 1;
   min-height: 36px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 120px;
 }
 
 .container .btn:disabled {
