@@ -268,43 +268,85 @@ chrome.runtime.onStartup.addListener(async () => {
 // Schedule the ayah alarm
 async function scheduleAyahAlarm() {
   try {
+    console.log('🔔 Starting alarm scheduling...');
+    
     const result = await chrome.storage.sync.get(['interval']);
     const interval = result.interval || DEFAULT_SETTINGS.interval;
     
+    console.log(`📊 Interval value: ${interval} minutes`);
+    
+    // Validate interval
+    if (interval < 1 || interval > 1440) {
+      console.error(`❌ Invalid interval: ${interval}. Must be between 1 and 1440 minutes`);
+      return;
+    }
+    
     // Clear existing alarm
+    console.log('🧹 Clearing existing alarm...');
     await chrome.alarms.clear('quran-ayah-reminder');
     
     // Create new alarm with more reliable settings
+    console.log(`⏰ Creating new alarm with interval: ${interval} minutes`);
     await chrome.alarms.create('quran-ayah-reminder', {
       delayInMinutes: interval,
       periodInMinutes: interval
     });
     
     // Verify alarm was created
+    console.log('🔍 Verifying alarm creation...');
     const alarm = await chrome.alarms.get('quran-ayah-reminder');
     if (alarm) {
-      console.log(`Ayah alarm scheduled successfully for every ${interval} minutes`);
-      console.log(`Next alarm at: ${new Date(Date.now() + interval * 60 * 1000).toLocaleString()}`);
+      console.log(`✅ Ayah alarm scheduled successfully for every ${interval} minutes`);
+      console.log(`📅 Next alarm at: ${new Date(Date.now() + interval * 60 * 1000).toLocaleString()}`);
+      console.log('🔍 Alarm details:', alarm);
     } else {
-      console.error('Failed to create alarm');
+      console.error('❌ Failed to create alarm - alarm not found after creation');
+      console.log('🔄 Trying alternative approach with shorter delay...');
       // Try alternative approach with shorter delay
       await chrome.alarms.create('quran-ayah-reminder', {
         delayInMinutes: 1,
         periodInMinutes: interval
       });
-      console.log(`Alternative alarm scheduling attempted`);
+      console.log(`🔄 Alternative alarm scheduling attempted`);
+      
+      // Verify alternative alarm
+      const altAlarm = await chrome.alarms.get('quran-ayah-reminder');
+      if (altAlarm) {
+        console.log('✅ Alternative alarm created successfully');
+      } else {
+        console.error('❌ Alternative alarm also failed');
+      }
     }
   } catch (error) {
-    console.error('Error scheduling alarm:', error);
+    console.error('❌ Error scheduling alarm:', error);
+    console.error('🔍 Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
+    
     // Fallback: try to create a simple alarm
+    console.log('🔄 Attempting fallback alarm creation...');
     try {
       await chrome.alarms.create('quran-ayah-reminder', {
         delayInMinutes: 1,
         periodInMinutes: DEFAULT_SETTINGS.interval
       });
-      console.log('Fallback alarm created');
+      console.log('✅ Fallback alarm created successfully');
+      
+      // Verify fallback alarm
+      const fallbackAlarm = await chrome.alarms.get('quran-ayah-reminder');
+      if (fallbackAlarm) {
+        console.log('✅ Fallback alarm verified:', fallbackAlarm);
+      } else {
+        console.error('❌ Fallback alarm verification failed');
+      }
     } catch (fallbackError) {
-      console.error('Fallback alarm creation failed:', fallbackError);
+      console.error('❌ Fallback alarm creation failed:', fallbackError);
+      console.error('🔍 Fallback error details:', {
+        name: fallbackError.name,
+        message: fallbackError.message
+      });
     }
   }
 }
