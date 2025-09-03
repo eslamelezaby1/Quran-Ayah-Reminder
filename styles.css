@@ -1,4 +1,4 @@
-/* Quran Ayah Reminder - Styles */
+/* Quran Ayah Reminder - Modern Simple Theme */
 
 * {
   margin: 0;
@@ -9,191 +9,192 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   font-size: 14px;
-  line-height: 1.5;
-  color: #333;
-  background: #f8f9fa;
+  line-height: 1.6;
+  color: #8D663D;
+  background: #D5D2BD;
 }
 
 /* ===== POPUP STYLES ===== */
 
-/* Popup container - Optimized for Chrome popup */
+/* Popup container - Modern and clean */
 .container {
   width: 350px;
   min-height: 450px;
   max-height: 600px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  background: #FEFBE1;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(141, 102, 61, 0.08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* Popup header */
+/* Popup header - Simplified */
 .container .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px;
+  background: #8D663D;
+  color: #FEFBE1;
+  padding: 24px 20px;
   text-align: center;
   flex-shrink: 0;
 }
 
 .container .header h1 {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
   line-height: 1.2;
 }
 
 .container .header p {
-  font-size: 13px;
-  opacity: 0.9;
+  font-size: 12px;
+  opacity: 0.8;
   font-weight: 400;
   line-height: 1.3;
 }
 
-/* Popup ayah section */
+/* Popup ayah section - Clean layout */
 .container .ayah-section {
-  padding: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 24px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  background: #FEFBE1;
 }
 
 .container .ayah-section h2 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 12px;
-  color: #333;
+  margin-bottom: 16px;
+  color: #8D663D;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* CRITICAL: Add status section styles */
+/* Status section - Minimal */
 .container .status-section {
-  padding: 15px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  background: #f8f9fa;
+  padding: 16px 20px;
+  background: #D5D2BD;
+  border-top: 1px solid rgba(141, 102, 61, 0.1);
 }
 
 .container .status-section h3 {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  margin-bottom: 10px;
-  color: #666;
+  margin-bottom: 8px;
+  color: #8D663D;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .container .status-content {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.4;
 }
 
 .container .status-info p {
-  margin-bottom: 4px;
-  color: #333;
+  margin-bottom: 2px;
+  color: #8D663D;
 }
 
 .container .status-error p {
-  margin-bottom: 4px;
-  color: #d32f2f;
+  margin-bottom: 2px;
+  color: #A0522D;
 }
 
 .container .status-info strong {
-  color: #2c3e50;
+  color: #6B4A2A;
 }
 
 .container .status-error strong {
-  color: #d32f2f;
+  color: #A0522D;
 }
 
-/* CRITICAL: Add debug button styles */
+/* Debug buttons - Simplified */
 .btn-debug {
-  background: #ff9800 !important;
-  color: white !important;
-  border: 1px solid #f57c00 !important;
+  background: #A0522D !important;
+  color: #FEFBE1 !important;
+  border: none !important;
   margin-top: 8px;
-  font-size: 12px;
-  padding: 8px 12px;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 6px;
 }
 
 .btn-debug:hover {
-  background: #f57c00 !important;
-  border-color: #ef6c00 !important;
+  background: #8D663D !important;
 }
 
-/* CRITICAL: Add storage debug button styles */
 .btn-storage {
-  background: #9c27b0 !important;
-  color: white !important;
-  border: 1px solid #7b1fa2 !important;
+  background: #6B4A2A !important;
+  color: #FEFBE1 !important;
+  border: none !important;
   margin-top: 8px;
-  font-size: 12px;
-  padding: 8px 12px;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 6px;
 }
 
 .btn-storage:hover {
-  background: #7b1fa2 !important;
-  border-color: #6a1b9a !important;
+  background: #5A3D22 !important;
 }
 
-/* CRITICAL: Add styling for no-ayah and error sections */
+/* No ayah and error sections - Clean */
 .no-ayah-section {
   text-align: center;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 10px;
-  border: 2px dashed #dee2e6;
+  padding: 32px 20px;
+  background: #D5D2BD;
+  border-radius: 12px;
+  border: 1px solid rgba(141, 102, 61, 0.2);
 }
 
 .no-ayah {
-  font-size: 16px;
-  color: #6c757d;
+  font-size: 14px;
+  color: #8D663D;
   margin-bottom: 8px;
   font-weight: 500;
 }
 
 .no-ayah-help {
-  font-size: 13px;
-  color: #adb5bd;
-  margin-bottom: 15px;
+  font-size: 12px;
+  color: #A0522D;
   line-height: 1.4;
 }
 
 .error-section {
   text-align: center;
-  padding: 20px;
-  background: #fff5f5;
-  border-radius: 10px;
-  border: 2px solid #fed7d7;
+  padding: 32px 20px;
+  background: #FDF2E9;
+  border-radius: 12px;
+  border: 1px solid rgba(244, 164, 96, 0.3);
 }
 
 .error {
-  font-size: 16px;
-  color: #e53e3e;
+  font-size: 14px;
+  color: #CD853F;
   margin-bottom: 8px;
   font-weight: 500;
 }
 
 .error-details {
-  font-size: 13px;
-  color: #c53030;
-  margin-bottom: 15px;
+  font-size: 12px;
+  color: #A0522D;
   line-height: 1.4;
   word-break: break-word;
 }
 
 .container .ayah-info {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
+/* Ayah text - Modern card design */
 .container .ayah-text {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 14px;
-  border-left: 4px solid #667eea;
+  background: #D5D2BD;
+  border-radius: 12px;
+  padding: 20px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -201,15 +202,16 @@ body {
   overflow-wrap: break-word;
   word-wrap: break-word;
   max-width: 100%;
+  border: 1px solid rgba(141, 102, 61, 0.1);
 }
 
 .arabic-text {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.8;
   text-align: right;
   direction: rtl;
-  margin-bottom: 12px;
-  color: #2c3e50;
+  margin-bottom: 16px;
+  color: #6B4A2A;
   font-weight: 500;
   hyphens: auto;
   -webkit-hyphens: auto;
@@ -217,50 +219,52 @@ body {
 }
 
 .reference {
-  font-size: 12px;
-  color: #667eea;
+  font-size: 11px;
+  color: #8D663D;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: auto;
+  opacity: 0.8;
 }
 
-/* Popup timer */
+/* Timer - Clean design */
 .container .ayah-timer {
-  background: #e8f4fd;
+  background: rgba(141, 102, 61, 0.05);
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
   text-align: center;
-  border: 1px solid #b3d9f2;
+  border: 1px solid rgba(141, 102, 61, 0.1);
   flex-shrink: 0;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .container .ayah-timer p {
-  font-size: 13px;
-  color: #2980b9;
+  font-size: 12px;
+  color: #8D663D;
   font-weight: 500;
   margin: 0;
 }
 
 .container #timeRemaining {
-  font-weight: 700;
-  color: #e74c3c;
+  font-weight: 600;
+  color: #8D663D;
 }
 
-/* Popup actions */
+/* Actions - Modern buttons */
 .container .actions {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
+  background: #FEFBE1;
 }
 
 .container .btn {
-  padding: 12px 16px;
+  padding: 14px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -276,137 +280,146 @@ body {
 }
 
 .container .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .container .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #8D663D;
+  color: #FEFBE1;
 }
 
 .container .btn-primary:hover:not(:disabled) {
+  background: #7A5A33;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .container .btn-secondary {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
+  background: #D2B48C;
+  color: #6B4A2A;
 }
 
 .container .btn-secondary:hover:not(:disabled) {
+  background: #C19A6B;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);
 }
 
 .container .btn-outline {
   background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #8D663D;
+  border: 1px solid #8D663D;
 }
 
 .container .btn-outline:hover:not(:disabled) {
-  background: #667eea;
-  color: white;
+  background: #8D663D;
+  color: #FEFBE1;
 }
 
-/* Popup footer */
+/* Footer - Minimal */
 .container .footer {
   padding: 16px 20px;
-  background: #f8f9fa;
+  background: #D5D2BD;
   text-align: center;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid rgba(141, 102, 61, 0.1);
   flex-shrink: 0;
 }
 
 .container .footer p {
-  font-size: 11px;
-  color: #666;
+  font-size: 10px;
+  color: #8D663D;
   font-weight: 400;
   margin: 0;
+  opacity: 0.7;
 }
 
 /* ===== OPTIONS PAGE STYLES ===== */
 
-/* Options container */
+/* Options container - Modern */
 .options-container {
   width: 100%;
   max-width: 600px;
   min-height: auto;
   margin: 20px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  background: #FEFBE1;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(141, 102, 61, 0.08);
+  overflow: hidden;
 }
 
-/* Options header */
+/* Options header - Clean */
 .options-container .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 24px;
+  background: #8D663D;
+  color: #FEFBE1;
+  padding: 32px 24px;
   text-align: center;
-  border-radius: 12px 12px 0 0;
 }
 
 .options-container .header h1 {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
 .options-container .header p {
-  font-size: 14px;
-  opacity: 0.9;
+  font-size: 13px;
+  opacity: 0.8;
   font-weight: 400;
 }
 
 .subtitle {
-  font-size: 13px;
-  opacity: 0.9;
+  font-size: 12px;
+  opacity: 0.8;
   font-weight: 400;
 }
 
-/* Options content */
+/* Options content - Spacious */
 .content {
-  padding: 24px;
+  padding: 32px 24px;
+  background: #FEFBE1;
 }
 
-/* Form styles */
+/* Form styles - Modern inputs */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .form-group label {
   display: block;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 8px;
-  color: #374151;
+  color: #8D663D;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group select,
 .form-group input[type="text"] {
   width: 100%;
-  padding: 10px 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 6px;
+  padding: 14px 16px;
+  border: 1px solid rgba(141, 102, 61, 0.2);
+  border-radius: 10px;
   font-size: 14px;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
+  background: #FEFBE1;
+  color: #8D663D;
 }
 
 .form-group select:focus,
 .form-group input[type="text"]:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #8D663D;
+  background: #FEFBE1;
+  box-shadow: 0 0 0 3px rgba(141, 102, 61, 0.1);
 }
 
 .help-text {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 5px;
+  font-size: 11px;
+  color: #8D663D;
+  margin-top: 6px;
   line-height: 1.4;
+  opacity: 0.7;
 }
 
 .checkbox-label {
@@ -414,22 +427,23 @@ body {
   align-items: center;
   cursor: pointer;
   font-weight: 500;
-  color: #374151;
+  color: #8D663D;
+  font-size: 13px;
 }
 
 .checkbox-label input[type="checkbox"] {
   margin-right: 10px;
-  width: 18px;
-  height: 18px;
-  accent-color: #3b82f6;
+  width: 16px;
+  height: 16px;
+  accent-color: #8D663D;
 }
 
-/* Options buttons */
+/* Options buttons - Modern */
 .options-container .btn {
   padding: 14px 20px;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -440,52 +454,54 @@ body {
 }
 
 .options-container .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .options-container .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #8D663D;
+  color: #FEFBE1;
 }
 
 .options-container .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  background: #7A5A33;
+  transform: translateY(-1px);
 }
 
 .options-container .btn-secondary {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
+  background: #D2B48C;
+  color: #6B4A2A;
 }
 
 .options-container .btn-secondary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(240, 147, 251, 0.3);
+  background: #C19A6B;
+  transform: translateY(-1px);
 }
 
-/* Form actions */
+/* Form actions - Clean layout */
 .form-actions {
   display: flex;
   gap: 12px;
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-top: 32px;
+  margin-bottom: 32px;
 }
 
-/* Info section */
+/* Info section - Modern card */
 .info-section {
-  margin-top: 25px;
-  padding: 20px;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 6px;
+  margin-top: 32px;
+  padding: 24px;
+  background: #D5D2BD;
+  border-radius: 12px;
+  border: 1px solid rgba(141, 102, 61, 0.1);
 }
 
 .info-section h3 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 12px;
-  color: #0369a1;
+  margin-bottom: 16px;
+  color: #8D663D;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .info-section ul {
@@ -496,121 +512,128 @@ body {
 .info-section li {
   position: relative;
   padding-left: 20px;
-  margin-bottom: 8px;
-  font-size: 13px;
-  color: #0c4a6e;
-  line-height: 1.4;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #6B4A2A;
+  line-height: 1.5;
 }
 
 .info-section li:before {
   content: "•";
   position: absolute;
   left: 0;
-  color: #0ea5e9;
+  color: #8D663D;
   font-weight: bold;
 }
 
-/* Next ayah timer */
+/* Next ayah timer - Clean */
 .next-ayah-timer {
-  margin-top: 20px;
-  padding: 16px;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 6px;
+  margin-top: 24px;
+  padding: 20px;
+  background: #D5D2BD;
+  border-radius: 12px;
+  border: 1px solid rgba(141, 102, 61, 0.1);
 }
 
 .next-ayah-timer h3 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #0369a1;
+  color: #8D663D;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .next-ayah-timer p {
-  font-size: 13px;
-  color: #0c4a6e;
+  font-size: 12px;
+  color: #6B4A2A;
   line-height: 1.4;
   margin: 0;
 }
 
 .next-ayah-timer span {
   font-weight: 600;
+  color: #8D663D;
 }
 
-/* Options footer */
+/* Options footer - Minimal */
 .options-container .footer {
   padding: 20px 24px;
-  background: #f8f9fa;
+  background: #D5D2BD;
   text-align: center;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid rgba(141, 102, 61, 0.1);
 }
 
 .options-container .footer p {
-  font-size: 12px;
-  color: #666;
+  font-size: 11px;
+  color: #8D663D;
   font-weight: 400;
+  opacity: 0.7;
 }
 
 .options-container .footer a {
-  color: #667eea;
+  color: #8D663D;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   transition: color 0.2s;
+  font-weight: 500;
 }
 
 .options-container .footer a:hover {
-  color: #5a67d8;
+  color: #6B4A2A;
 }
 
 /* ===== SHARED STYLES ===== */
 
-/* Message styles */
+/* Message styles - Modern alerts */
 .message {
-  padding: 12px 16px;
+  padding: 16px 20px;
   margin: 16px 20px;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 500;
 }
 
 .message-success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background: rgba(34, 197, 94, 0.1);
+  color: #166534;
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .message-error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background: rgba(239, 68, 68, 0.1);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .message-info {
-  background: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
+  background: rgba(141, 102, 61, 0.1);
+  color: #6B4A2A;
+  border: 1px solid rgba(141, 102, 61, 0.2);
 }
 
-/* Loading and error states */
+/* Loading and error states - Clean */
 .loading {
   text-align: center;
-  color: #666;
+  color: #8D663D;
   font-style: italic;
-  padding: 20px;
+  padding: 32px 20px;
+  opacity: 0.7;
 }
 
 .no-ayah {
   text-align: center;
-  color: #666;
+  color: #8D663D;
   font-style: italic;
-  padding: 20px;
+  padding: 32px 20px;
+  opacity: 0.7;
 }
 
 .error {
   text-align: center;
-  color: #e74c3c;
+  color: #CD853F;
   font-weight: 500;
-  padding: 20px;
+  padding: 32px 20px;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -624,24 +647,24 @@ body {
   }
   
   .container .header h1 {
-    font-size: 18px;
+    font-size: 16px;
   }
   
   .container .header p {
-    font-size: 12px;
+    font-size: 11px;
   }
   
   .container .ayah-section h2 {
-    font-size: 15px;
+    font-size: 13px;
   }
   
   .container .arabic-text {
-    font-size: 15px;
+    font-size: 14px;
   }
   
   .container .btn {
     font-size: 12px;
-    padding: 10px 14px;
+    padding: 12px 14px;
   }
 }
 
@@ -649,7 +672,7 @@ body {
 @media (max-width: 400px) {
   .options-container {
     margin: 10px;
-    border-radius: 8px;
+    border-radius: 16px;
   }
   
   .form-actions {
