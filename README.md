@@ -1,117 +1,143 @@
-# Quran Ayah Reminder
+# 📖 Quran Ayah Reminder
 
-A beautiful Chrome extension that reminds you of Allah's words throughout your day with automatically rotating Quran verses.
+A Chrome extension that sends periodic notifications with random Quran verses to remind you of Allah's words throughout your day.
 
 ## ✨ Features
 
-- **🕒 Time-Based Ayah Rotation**: Ayahs automatically change based on your chosen time interval (15 minutes to 3 hours)
-- **📱 Beautiful Notifications**: Receive beautiful notifications with Arabic text
-- **🔄 Manual Control**: Force a new ayah anytime with the "New Ayah" button
-- **⏰ Countdown Timer**: See exactly when the next ayah will be available
-- **🌐 Online Integration**: Fetches fresh ayahs from the Quran API with fallback to embedded verses
-- **⚙️ Customizable Settings**: Choose your preferred reminder interval
-- **🔗 Quick Access**: Click notifications to open ayahs directly on Quran.com
+- **🕐 Customizable Intervals**: Choose from 10 minutes to 3 hours between reminders
+- **🌐 Online Quran API**: Fetches authentic Quran verses from Al-Quran Cloud API
+- **🔄 Fallback System**: Uses embedded verses when API is unavailable
+- **🔔 Smart Notifications**: Click notifications to open verses on Quran.com
+- **⚙️ Easy Settings**: Simple options page to configure reminder frequency
 
-## 🚀 How It Works
+## 🚀 Installation
 
-### Automatic Ayah Rotation
-- **Time-Based System**: Instead of random ayahs every time, the extension now rotates ayahs based on time intervals
-- **Smart Caching**: Once an ayah is fetched, it remains active until the time interval expires
-- **Efficient API Usage**: Reduces API calls by only fetching new ayahs when needed
+### From Chrome Web Store (Recommended)
+1. Visit the Chrome Web Store
+2. Search for "Quran Ayah Reminder"
+3. Click "Add to Chrome"
+4. Confirm the installation
 
-### Timer Display
-- **Popup Timer**: Shows countdown to next ayah change in the popup
-- **Options Timer**: Displays when next ayah will be available in the options page
-- **Real-time Updates**: Timer updates every second to show accurate countdown
-
-### Manual Controls
-- **Send Ayah Now**: Send the current ayah as a notification immediately
-- **New Ayah Button**: Force a new ayah before the time interval expires
-- **Test Notifications**: Test the notification system anytime
-
-## 📥 Installation
-
+### Manual Installation (Developer Mode)
 1. Download or clone this repository
 2. Open Chrome and go to `chrome://extensions/`
 3. Enable "Developer mode" in the top right
 4. Click "Load unpacked" and select the extension folder
-5. The extension icon will appear in your toolbar
+5. The extension will be installed and ready to use
 
-## ⚙️ Configuration
+## 🎮 How to Use
+
+### Getting Started
+1. **Install the extension** using one of the methods above
+2. **Click the extension icon** in your Chrome toolbar
+3. **Configure settings** by clicking "Settings" in the popup
+4. **Choose your reminder interval** (10 minutes to 3 hours)
+5. **Save your settings** and you're all set!
+
+### Main Features
+- **📖 Send Now**: Get an immediate Quran verse notification
+- **🔄 New Ayah**: Request a fresh verse right away
+- **⚙️ Settings**: Adjust reminder frequency and test notifications
+- **⏰ Timer**: See when the next reminder will arrive
+- **🚀 Initialize**: Manual initialization if extension needs setup
+
+### Notification Interaction
+- **Click any notification** to open the verse on Quran.com
+- **Notifications appear** based on your chosen interval
+- **Verses are randomly selected** from the entire Quran
+
+## 🔧 Configuration
 
 ### Reminder Intervals
-- **15 minutes**: For frequent reminders
-- **30 minutes**: Balanced approach
-- **45 minutes**: Moderate frequency
-- **60 minutes**: Default setting (every hour)
-- **120 minutes**: Every 2 hours
-- **180 minutes**: Every 3 hours
+- Every 10 minutes
+- Every 15 minutes  
+- Every 30 minutes
+- Every 45 minutes
+- Every 60 minutes (1 hour)
+- Every 2 hours
+- Every 3 hours
 
-## 🔧 Technical Details
+### Settings Page
+Access settings by:
+1. Clicking the extension icon
+2. Clicking "Settings" button
+3. Or going to `chrome://extensions/` → Quran Ayah Reminder → "Extension options"
+
+## 🛠️ Technical Details
+
+### Permissions Used
+- **notifications**: To display Quran verse reminders
+- **storage**: To save user settings and sync across devices
+- **alarms**: To schedule periodic reminders
+- **host_permissions**: Access to Al-Quran Cloud API
 
 ### Architecture
-- **Background Service Worker**: Handles alarms, API calls, and notifications
-- **Popup Interface**: Main user interface with timer and controls
-- **Options Page**: Settings configuration and testing
-- **Storage Sync**: Settings and ayah data synced across devices
+- **Manifest V3**: Modern Chrome extension architecture
+- **Service Worker**: Background script for alarms and notifications
+- **Popup Interface**: User-friendly control panel
+- **Options Page**: Settings configuration
+- **Fallback System**: Embedded verses for offline reliability
 
 ### API Integration
-- **Primary Source**: [AlQuran Cloud API](https://alquran.cloud/api) for fresh ayahs
-- **Fallback System**: Embedded fallback ayat if API fails
+- **Primary**: Al-Quran Cloud API (https://api.alquran.cloud)
+- **Fallback**: Embedded verses when API is unavailable
+- **Random Selection**: Fetches random verses from the entire Quran
 
-### Time Management
-- **Interval Tracking**: Uses Chrome alarms for precise timing
-- **Timestamp Storage**: Stores when each ayah was fetched
-- **Automatic Rotation**: Seamlessly switches ayahs when intervals expire
+## 🎨 User Interface
 
-## 🎯 Use Cases
+### Popup Features
+- Current verse display with Arabic text and reference
+- Countdown timer to next reminder
+- Quick action buttons (Send Now, New Ayah, Settings)
+- Extension status and error handling
+- Manual initialization option
 
-- **Daily Reminders**: Set hourly reminders for spiritual reflection
-- **Study Aid**: Use shorter intervals for focused Quran study
-- **Mindfulness**: Gentle reminders throughout the day
-- **Family Time**: Share beautiful verses with family members
+### Options Page
+- Interval selection dropdown (10 minutes to 3 hours)
+- Test notification button
+- Next ayah countdown timer
+- Helpful information section
+- Easy navigation back to extension
 
-## 🛠️ Development
+## 🔒 Privacy & Security
 
-### File Structure
-```
-├── manifest.json          # Extension configuration
-├── background.js          # Service worker and core logic
-├── popup.html            # Main popup interface
-├── popup.js              # Popup functionality
-├── options.html          # Settings page
-├── options.js            # Options functionality
-├── styles.css            # Shared styling
-├── assets/               # Icons and images
-└── README.md             # This file
-```
+- **No personal data collected**: Extension only stores your reminder preferences
+- **Secure API calls**: Uses HTTPS for all external requests
+- **Local storage**: Settings stored locally in Chrome
+- **No tracking**: No analytics or user tracking
 
-### Key Functions
-- `getNewAyahIfNeeded()`: Smart ayah rotation logic
-- `updateTimer()`: Real-time countdown display
-- `scheduleAyahAlarm()`: Chrome alarm management
-- `fetchRandomAyah()`: API integration with fallbacks
+## 🐛 Troubleshooting
 
-## 🔄 Recent Updates
+### Common Issues
 
-### Version 2.0 - Time-Based Rotation
-- ✅ **Smart Ayah Rotation**: Ayahs now change based on time intervals instead of every notification
-- ✅ **Countdown Timer**: Real-time display showing when next ayah will be available
-- ✅ **Manual Control**: New "New Ayah" button for immediate ayah changes
-- ✅ **Efficient API Usage**: Reduced API calls through intelligent caching
-- ✅ **Enhanced UI**: Modern, responsive design with better user experience
+**Notifications not appearing:**
+- Check Chrome notification permissions
+- Ensure extension is enabled
+- Verify your chosen interval settings
 
-### Previous Features
-- ✅ Automatic notifications at set intervals
-- ✅ Arabic text
-- ✅ Click notifications to open on Quran.com
-- ✅ Customizable reminder intervals
-- ✅ Fallback ayat system
-- ✅ Cross-device synchronization
+**Extension not working after Chrome update:**
+- Go to `chrome://extensions/`
+- Find Quran Ayah Reminder
+- Click "Reload" if needed
+
+**Settings not saving:**
+- Check Chrome sync status
+- Try refreshing the options page
+- Restart Chrome if needed
+
+### Debug Features
+The extension includes built-in debugging features for troubleshooting alarm and storage issues.
 
 ## 🤝 Contributing
 
-Feel free to submit issues, feature requests, or pull requests to improve this extension.
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
+
+### Development Setup
+1. Clone the repository
+2. Load as unpacked extension in Chrome (`chrome://extensions/` → Developer mode → Load unpacked)
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## 📄 License
 
@@ -119,9 +145,17 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- API services by [AlQuran Cloud](https://alquran.cloud)
-- Built with love for the Muslim community
+- **Al-Quran Cloud API**: For providing authentic Quran text
+- **Quran.com**: For hosting the verse links
+- **Chrome Extensions Team**: For the excellent extension platform
+
+## 📞 Support
+
+If you encounter any issues or have questions:
+- Check the troubleshooting section above
+- Review the extension's options page for help
+- Submit an issue on the project repository
 
 ---
 
-**May Allah bless you and guide you through His beautiful words.** 🌟
+**May this extension help you stay connected to Allah's words throughout your day. 🌟**
