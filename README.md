@@ -111,23 +111,115 @@ Access settings by:
 
 ### Common Issues
 
-**Notifications not appearing:**
-- Check Chrome notification permissions
-- Ensure extension is enabled
-- Verify your chosen interval settings
+**Notifications not appearing when timer ends:**
+- Check Chrome notification permissions for the extension
+- Ensure the extension is enabled and not paused
+- Verify your chosen interval settings are saved
+- Try using the "Send Ayah Now" button to test immediate notifications
+- Check if your system is in "Do Not Disturb" mode
+- Restart Chrome and reload the extension
 
 **Extension not working after Chrome update:**
 - Go to `chrome://extensions/`
 - Find Ayah Reminder
 - Click "Reload" if needed
+- Check if any permissions were revoked
 
 **Settings not saving:**
 - Check Chrome sync status
 - Try refreshing the options page
 - Restart Chrome if needed
+- Use the debug storage feature to repair settings
+
+**Timer shows "Now!" but no notification:**
+- Click the "Debug Alarms" button in the popup
+- Check the browser console for error messages
+- Try manually sending a notification with "Send Ayah Now"
+- Verify the background script is running properly
+
+### Advanced Troubleshooting
+
+**Step-by-step notification fix:**
+
+1. **Check Permissions:**
+   - Go to `chrome://extensions/`
+   - Find Ayah Reminder
+   - Click "Details"
+   - Ensure "Allow in incognito" is enabled
+   - Check that all permissions are granted
+
+2. **Test Notifications:**
+   - Open the extension popup
+   - Click "Send Ayah Now" to test immediate notifications
+   - If this works, the issue is with alarm scheduling
+   - If this fails, check notification permissions
+
+3. **Debug Extension:**
+   - Open the extension popup
+   - Click "Debug Alarms" to check alarm status
+   - Click "Debug Storage" to repair any corrupted settings
+   - Check the browser console (F12) for detailed error messages
+
+4. **Reset Extension:**
+   - Go to `chrome://extensions/`
+   - Find Ayah Reminder
+   - Click "Remove" then reinstall
+   - This will reset all settings and alarms
+
+5. **Check System Settings:**
+   - Ensure Chrome notifications are enabled in system settings
+   - Check if "Focus Assist" (Windows) or "Do Not Disturb" (Mac) is active
+   - Verify Chrome is not muted
+
+**Using the Test Page:**
+- Open `test-notifications.html` in Chrome
+- Run through all the test buttons to identify the specific issue
+- Check the console for detailed error messages
+- Use the debug features to repair any problems
 
 ### Debug Features
-The extension includes built-in debugging features for troubleshooting alarm and storage issues.
+
+The extension includes built-in debugging features for troubleshooting alarm and storage issues:
+
+- **Debug Alarms:** Checks alarm status and scheduling
+- **Debug Storage:** Repairs corrupted settings and data
+- **Test Notifications:** Sends immediate test notifications
+- **Status Check:** Verifies extension initialization
+
+### Common Error Messages
+
+**"Notification permission required":**
+- Grant notification permissions in Chrome settings
+- Check system notification settings
+
+**"Background script not initialized":**
+- Reload the extension
+- Check if the service worker is running
+
+**"Alarm creation failed":**
+- Try the debug alarms feature
+- Restart Chrome and reload extension
+
+**"Storage sync failed":**
+- Check Chrome sync status
+- Use debug storage to repair settings
+
+### Performance Tips
+
+- **Shorter intervals** (10-30 minutes) work more reliably than longer ones
+- **Keep Chrome running** to ensure alarms trigger properly
+- **Avoid system sleep** during testing periods
+- **Check console logs** for detailed debugging information
+
+### Getting Help
+
+If you're still experiencing issues:
+
+1. **Check the console logs** (F12 → Console tab) for error messages
+2. **Use the debug features** in the extension popup
+3. **Test with the notification test page** (`test-notifications.html`)
+4. **Try resetting the extension** completely
+5. **Submit an issue** with detailed error messages and steps to reproduce
 
 ## 🤝 Contributing
 

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notification Test - Ayah Reminder</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #8D663D;
+      margin-bottom: 20px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f8f8f8;
+      border-radius: 8px;
+      border-left: 4px solid #8D663D;
+    }
+    .btn {
+      background: #8D663D;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 5px;
+    }
+    .btn:hover {
+      background: #7A5A33;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .status.success {
+      background: rgba(34, 197, 94, 0.1);
+      color: #166534;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    .status.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #991b1b;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .status.info {
+      background: rgba(141, 102, 61, 0.1);
+      color: #6B4A2A;
+      border: 1px solid rgba(141, 102, 61, 0.2);
+    }
+    .instructions {
+      background: #e8f4fd;
+      border: 1px solid #bee5eb;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    .instructions h3 {
+      color: #0c5460;
+      margin-top: 0;
+    }
+    .instructions ol {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    .instructions li {
+      margin: 5px 0;
+      color: #0c5460;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔔 Ayah Reminder - Notification Test</h1>
+    
+    <div class="instructions">
+      <h3>How to test notifications:</h3>
+      <ol>
+        <li>Make sure the Ayah Reminder extension is installed and enabled</li>
+        <li>Check that notification permissions are granted for the extension</li>
+        <li>Click the test buttons below to verify functionality</li>
+        <li>Check the browser console (F12) for detailed logs</li>
+      </ol>
+    </div>
+
+    <div class="test-section">
+      <h3>1. Test Extension Connection</h3>
+      <button class="btn" onclick="testConnection()">Test Connection</button>
+      <div id="connectionStatus" class="status" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>2. Test Notification Permissions</h3>
+      <button class="btn" onclick="testPermissions()">Check Permissions</button>
+      <div id="permissionStatus" class="status" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>3. Test Immediate Notification</h3>
+      <button class="btn" onclick="testNotification()">Send Test Notification</button>
+      <div id="notificationStatus" class="status" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>4. Test Alarm Scheduling</h3>
+      <button class="btn" onclick="testAlarm()">Schedule Test Alarm (1 min)</button>
+      <div id="alarmStatus" class="status" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>5. Debug Extension</h3>
+      <button class="btn" onclick="debugExtension()">Debug Alarms</button>
+      <button class="btn" onclick="debugStorage()">Debug Storage</button>
+      <div id="debugStatus" class="status" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>6. Extension Status</h3>
+      <button class="btn" onclick="getStatus()">Get Status</button>
+      <div id="statusInfo" class="status" style="display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Test extension connection
+    async function testConnection() {
+      const statusDiv = document.getElementById('connectionStatus');
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'status info';
+      statusDiv.textContent = 'Testing connection...';
+
+      try {
+        const response = await chrome.runtime.sendMessage({ action: 'ping' });
+        if (response && response.status === 'active') {
+          statusDiv.className = 'status success';
+          statusDiv.textContent = `✅ Connection successful! Extension is ${response.initialized ? 'initialized' : 'not initialized'}`;
+        } else {
+          throw new Error('Invalid response');
+        }
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Connection failed: ${error.message}`;
+      }
+    }
+
+    // Test notification permissions
+    async function testPermissions() {
+      const statusDiv = document.getElementById('permissionStatus');
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'status info';
+      statusDiv.textContent = 'Checking permissions...';
+
+      try {
+        const permissions = await chrome.permissions.getAll();
+        if (permissions.permissions && permissions.permissions.includes('notifications')) {
+          statusDiv.className = 'status success';
+          statusDiv.textContent = '✅ Notification permissions granted';
+        } else {
+          statusDiv.className = 'status error';
+          statusDiv.textContent = '❌ Notification permissions not granted';
+        }
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Error checking permissions: ${error.message}`;
+      }
+    }
+
+    // Test immediate notification
+    async function testNotification() {
+      const statusDiv = document.getElementById('notificationStatus');
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'status info';
+      statusDiv.textContent = 'Sending test notification...';
+
+      try {
+        const response = await chrome.runtime.sendMessage({ action: 'testNotification' });
+        if (response && response.success) {
+          statusDiv.className = 'status success';
+          statusDiv.textContent = '✅ Test notification sent successfully!';
+        } else {
+          throw new Error(response?.error || 'Unknown error');
+        }
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Failed to send notification: ${error.message}`;
+      }
+    }
+
+    // Test alarm scheduling
+    async function testAlarm() {
+      const statusDiv = document.getElementById('alarmStatus');
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'status info';
+      statusDiv.textContent = 'Scheduling test alarm...';
+
+      try {
+        // First, update settings to 1 minute interval
+        await chrome.runtime.sendMessage({ 
+          action: 'updateSettings', 
+          settings: { interval: 1 } 
+        });
+        
+        statusDiv.className = 'status success';
+        statusDiv.textContent = '✅ Test alarm scheduled for 1 minute from now!';
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Failed to schedule alarm: ${error.message}`;
+      }
+    }
+
+    // Debug extension
+    async function debugExtension() {
+      const statusDiv = document.getElementById('debugStatus');
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'status info';
+      statusDiv.textContent = 'Debugging alarms...';
+
+      try {
+        const response = await chrome.runtime.sendMessage({ action: 'debugAlarms' });
+        if (response && response.success) {
+          statusDiv.className = 'status success';
+          statusDiv.textContent = '✅ Alarm debug completed! Check console for details.';
+        } else {
+          throw new Error(response?.error || 'Debug failed');
+        }
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Debug failed: ${error.message}`;
+      }
+    }
+
+    async function debugStorage() {
+      const statusDiv = document.getElementById('debugStatus');
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'status info';
+      statusDiv.textContent = 'Debugging storage...';
+
+      try {
+        const response = await chrome.runtime.sendMessage({ action: 'debugStorage' });
+        if (response && response.success) {
+          statusDiv.className = 'status success';
+          statusDiv.textContent = '✅ Storage debug completed! Check console for details.';
+        } else {
+          throw new Error(response?.error || 'Debug failed');
+        }
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Debug failed: ${error.message}`;
+      }
+    }
+
+    // Get extension status
+    async function getStatus() {
+      const statusDiv = document.getElementById('statusInfo');
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'status info';
+      statusDiv.textContent = 'Getting status...';
+
+      try {
+        const response = await chrome.runtime.sendMessage({ action: 'getStatus' });
+        if (response) {
+          statusDiv.className = 'status success';
+          statusDiv.innerHTML = `
+            <strong>Extension Status:</strong><br>
+            ✅ Initialized: ${response.initialized ? 'Yes' : 'No'}<br>
+            📅 Last Check: ${new Date(response.timestamp).toLocaleString()}
+          `;
+        } else {
+          throw new Error('No response received');
+        }
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = `❌ Failed to get status: ${error.message}`;
+      }
+    }
+
+    // Auto-test on page load
+    window.addEventListener('load', () => {
+      console.log('Ayah Reminder Notification Test Page Loaded');
+      console.log('Open DevTools (F12) to see detailed logs');
+    });
+  </script>
+</body>
+</html>

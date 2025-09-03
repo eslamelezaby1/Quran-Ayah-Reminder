@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize popup
   loadLastAyah();
   setupEventListeners();
-  startTimer(); // Start the timer on popup load
+  startTimer();
   
   // Test background script connection
   testBackgroundConnection();
@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!document.hidden) {
       console.log('Popup became visible, checking for wake-up...');
       checkWakeUp();
-      // Re-check status when popup becomes visible
       checkExtensionStatus();
     }
   });
@@ -63,16 +62,13 @@ function setupEventListeners() {
 // Send ayah now
 async function sendAyahNow() {
   try {
-    // Disable button temporarily
     const sendNowBtn = document.getElementById('sendNowBtn');
     sendNowBtn.disabled = true;
     sendNowBtn.textContent = 'Sending...';
     
-    // Send message to background script
     const response = await chrome.runtime.sendMessage({ action: 'sendAyahNow' });
     
     if (response && response.success) {
-      // Update button text temporarily
       sendNowBtn.textContent = '✓ Sent!';
       setTimeout(() => {
         sendNowBtn.textContent = '📖 Send Ayah Now';
@@ -83,14 +79,18 @@ async function sendAyahNow() {
       setTimeout(() => {
         loadLastAyah();
       }, 1000);
+    } else {
+      throw new Error(response?.error || 'Unknown error');
     }
   } catch (error) {
     console.error('Error sending ayah:', error);
     
-    // Reset button
     const sendNowBtn = document.getElementById('sendNowBtn');
     sendNowBtn.textContent = '❌ Error';
     sendNowBtn.disabled = false;
+    
+    // Show error message
+    showErrorMessage(`Failed to send notification: ${error.message}`);
     
     setTimeout(() => {
       sendNowBtn.textContent = '📖 Send Ayah Now';
@@ -102,16 +102,13 @@ async function sendAyahNow() {
 // Force new ayah
 async function forceNewAyah() {
   try {
-    // Disable button temporarily
     const newAyahBtn = document.getElementById('newAyahBtn');
     newAyahBtn.disabled = true;
     newAyahBtn.textContent = 'Getting...';
     
-    // Send message to background script
     const response = await chrome.runtime.sendMessage({ action: 'forceNewAyah' });
     
     if (response && response.success) {
-      // Update button text temporarily
       newAyahBtn.textContent = '✓ New Ayah!';
       setTimeout(() => {
         newAyahBtn.textContent = '🔄 New Ayah';
@@ -122,14 +119,18 @@ async function forceNewAyah() {
       setTimeout(() => {
         loadLastAyah();
       }, 1000);
+    } else {
+      throw new Error(response?.error || 'Unknown error');
     }
   } catch (error) {
     console.error('Error getting new ayah:', error);
     
-    // Reset button
     const newAyahBtn = document.getElementById('newAyahBtn');
     newAyahBtn.textContent = '❌ Error';
     newAyahBtn.disabled = false;
+    
+    // Show error message
+    showErrorMessage(`Failed to get new ayah: ${error.message}`);
     
     setTimeout(() => {
       newAyahBtn.textContent = '🔄 New Ayah';
@@ -143,7 +144,26 @@ function openOptions() {
   chrome.runtime.openOptionsPage();
 }
 
-// Load last delivered ayah
+// Show error message
+function showErrorMessage(message) {
+  const statusElement = document.getElementById('extensionStatus');
+  if (statusElement) {
+    statusElement.innerHTML = `
+      <div class="status-error">
+        <p><strong>Error:</strong> ${message}</p>
+        <p><strong>Solution:</strong> Check notification permissions and try again</p>
+      </div>
+    `;
+    statusElement.style.display = 'block';
+    
+    // Hide after 5 seconds
+    setTimeout(() => {
+      statusElement.style.display = 'none';
+    }, 5000);
+  }
+}
+
+// Load last delivered ayah - IMPROVED
 async function loadLastAyah() {
   try {
     console.log('🔍 Loading last ayah from storage...');
@@ -153,7 +173,7 @@ async function loadLastAyah() {
     
     const lastAyah = result.lastAyah;
     const lastAyahTime = result.lastAyahTime;
-    const interval = result.interval || 60;
+    const interval = result.interval || 10; // Default to 10 minutes
     
     console.log('Parsed data:', {
       lastAyah: lastAyah,
@@ -179,61 +199,33 @@ async function loadLastAyah() {
       updateTimer(lastAyahTime, interval);
     } else {
       console.log('❌ No ayah found in storage');
-      // No ayah yet - try to get one automatically
+      
+      // Try to get initial ayah
       console.log('Attempting to get initial ayah...');
       
       try {
-        // Try to get a new ayah from background script
         const response = await chrome.runtime.sendMessage({ action: 'forceNewAyah' });
         if (response && response.success) {
           console.log('✅ Initial ayah created, reloading...');
-          // Wait a moment then reload
           setTimeout(() => {
             loadLastAyah();
           }, 1000);
           return;
+        } else {
+          throw new Error(response?.error || 'Failed to create initial ayah');
         }
       } catch (forceError) {
         console.error('Failed to force new ayah:', forceError);
+        
+        // Show message and provide manual option
+        lastAyahInfo.innerHTML = `
+          <div class="no-ayah-section">
+            <p class="no-ayah">No ayah delivered yet.</p>
+            <p class="no-ayah-help">Click "New Ayah" to get started.</p>
+            <p class="error-details">Error: ${forceError.message}</p>
+          </div>
+        `;
       }
-      
-      // Show message and provide manual option
-      lastAyahInfo.innerHTML = `
-        <div class="no-ayah-section">
-          <p class="no-ayah">No ayah delivered yet.</p>
-          <p class="no-ayah-help">This usually means the extension hasn't been initialized properly.</p>
-          <button id="initAyahBtn" class="btn btn-primary" style="margin-top: 10px;">🚀 Initialize Extension</button>
-        </div>
-      `;
-      
-      // Add event listener to the initialization button
-      setTimeout(() => {
-        const initBtn = document.getElementById('initAyahBtn');
-        if (initBtn) {
-          initBtn.addEventListener('click', async () => {
-            try {
-              initBtn.disabled = true;
-              initBtn.textContent = 'Initializing...';
-              
-              // Try multiple initialization methods
-              await chrome.runtime.sendMessage({ action: 'forceNewAyah' });
-              await chrome.runtime.sendMessage({ action: 'checkWakeUp' });
-              
-              // Wait and reload
-              setTimeout(() => {
-                loadLastAyah();
-              }, 2000);
-            } catch (error) {
-              console.error('Initialization failed:', error);
-              initBtn.textContent = '❌ Failed';
-              setTimeout(() => {
-                initBtn.textContent = '🚀 Initialize Extension';
-                initBtn.disabled = false;
-              }, 3000);
-            }
-          });
-        }
-      }, 100);
       
       // Show timer with "Ready" message
       ayahTimer.style.display = 'block';
@@ -268,14 +260,14 @@ async function loadLastAyah() {
   }
 }
 
-// Start the timer
+// Start the timer - IMPROVED
 function startTimer() {
   // Update timer every second
   setInterval(async () => {
     try {
       const result = await chrome.storage.sync.get(['lastAyahTime', 'interval']);
       const lastAyahTime = result.lastAyahTime;
-      const interval = result.interval || 60;
+      const interval = result.interval || 10;
       
       if (lastAyahTime) {
         updateTimer(lastAyahTime, interval);
@@ -285,7 +277,7 @@ function startTimer() {
     }
   }, 1000);
   
-  // Check for wake-up every 30 seconds to ensure timer accuracy
+  // Check for wake-up every 30 seconds
   setInterval(async () => {
     try {
       await checkWakeUp();
@@ -295,7 +287,7 @@ function startTimer() {
   }, 30000);
 }
 
-// Update the timer display
+// Update the timer display - IMPROVED
 function updateTimer(lastAyahTime, interval) {
   const now = Date.now();
   const timeSinceLastAyah = now - lastAyahTime;
@@ -306,15 +298,14 @@ function updateTimer(lastAyahTime, interval) {
   
   if (timeRemaining <= 0) {
     timeRemainingElement.textContent = 'Now!';
-    // Check if we need to refresh the ayah
+    // Check if we need to refresh the ayah and trigger notification
     checkAndRefreshAyah();
   } else {
     const minutes = Math.floor(timeRemaining / 60000);
     const seconds = Math.floor((timeRemaining % 60000) / 1000);
     timeRemainingElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     
-    // If the time remaining is suspiciously large (more than 2x the interval), 
-    // it might indicate a system wake-up scenario
+    // If the time remaining is suspiciously large, check for wake-up
     if (timeRemaining > intervalMs * 2) {
       console.log('Suspicious timer value detected, checking for wake-up...');
       checkWakeUp();
@@ -322,20 +313,40 @@ function updateTimer(lastAyahTime, interval) {
   }
 }
 
-// Check if we need to refresh the ayah and handle wake-up
+// Check if we need to refresh the ayah and handle wake-up - IMPROVED
 async function checkAndRefreshAyah() {
   try {
-    // Check for wake-up with background script
+    console.log('⏰ Timer expired, checking for new ayah...');
+    
+    // Check with background script if timer has actually expired
+    const response = await chrome.runtime.sendMessage({ action: 'checkTimerExpired' });
+    
+    if (response && response.expired) {
+      console.log('✅ Timer confirmed expired, triggering notification...');
+      
+      // Trigger notification from background script
+      await chrome.runtime.sendMessage({ action: 'sendAyahNow' });
+      
+      // Refresh ayah info after a short delay
+      setTimeout(() => {
+        loadLastAyah();
+      }, 1000);
+    } else {
+      console.log('⚠️ Timer not actually expired, continuing...');
+    }
+    
+    // Always check for wake-up
     await chrome.runtime.sendMessage({ action: 'checkWakeUp' });
     
-    // Refresh ayah info
-    await loadLastAyah();
   } catch (error) {
     console.error('Error checking wake-up:', error);
+    
+    // Show error message
+    showErrorMessage(`Timer check failed: ${error.message}`);
   }
 }
 
-// Check for wake-up when popup opens
+// Check for wake-up when popup opens - IMPROVED
 async function checkWakeUp() {
   try {
     console.log('Checking for wake-up...');
@@ -349,6 +360,7 @@ async function checkWakeUp() {
 // Listen for storage changes to update display
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'sync' && (changes.lastAyah || changes.lastAyahTime || changes.interval)) {
+    console.log('Storage changed, updating display...');
     loadLastAyah();
   }
 });
@@ -357,14 +369,20 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 async function testBackgroundConnection() {
   try {
     console.log('Testing background script connection...');
-    const response = await chrome.runtime.sendMessage({ action: 'testConnection' });
+    const response = await chrome.runtime.sendMessage({ action: 'ping' });
     console.log('Background connection test response:', response);
+    
+    if (!response || !response.initialized) {
+      console.warn('⚠️ Background script not fully initialized');
+      showErrorMessage('Background script not initialized. Try reloading the extension.');
+    }
   } catch (error) {
     console.error('Background connection test failed:', error);
+    showErrorMessage('Cannot connect to background script. Extension may not be working properly.');
   }
 }
 
-// CRITICAL: Add extension status check for debugging
+// Check extension status - IMPROVED
 async function checkExtensionStatus() {
   try {
     console.log('Checking extension status...');
@@ -378,12 +396,16 @@ async function checkExtensionStatus() {
       if (statusElement) {
         statusElement.innerHTML = `
           <div class="status-info">
-            <!-- <p><strong>Status:</strong> ${response.initialized ? '✅ Active' : '❌ Not Initialized'}</p> -->
-            <!-- <p><strong>Last Check:</strong> ${new Date(response.timestamp).toLocaleString()}</p> -->
-            <!-- <p><strong>Last Wake:</strong> ${new Date(response.lastWakeTime).toLocaleString()}</p> -->
+            <p><strong>Status:</strong> ${response.initialized ? '✅ Active' : '❌ Not Initialized'}</p>
+            <p><strong>Last Check:</strong> ${new Date(response.timestamp).toLocaleString()}</p>
           </div>
         `;
         statusElement.style.display = 'block';
+        
+        // Hide status after 3 seconds
+        setTimeout(() => {
+          statusElement.style.display = 'none';
+        }, 3000);
       }
     }
   } catch (error) {
@@ -403,28 +425,24 @@ async function checkExtensionStatus() {
   }
 }
 
-// CRITICAL: Add alarm debugging function
+// Debug alarms
 async function debugAlarms() {
   try {
-    // Disable button temporarily
     const debugBtn = document.getElementById('debugBtn');
     debugBtn.disabled = true;
     debugBtn.textContent = 'Debugging...';
     
     console.log('🔍 Starting alarm debug...');
     
-    // Send debug message to background script
     const response = await chrome.runtime.sendMessage({ action: 'debugAlarms' });
     
     if (response && response.success) {
-      // Update button text temporarily
       debugBtn.textContent = '✅ Debug Complete!';
       setTimeout(() => {
         debugBtn.textContent = '🔍 Debug Alarms';
         debugBtn.disabled = false;
       }, 3000);
       
-      // Show debug message
       const statusElement = document.getElementById('extensionStatus');
       if (statusElement) {
         statusElement.innerHTML = `
@@ -438,11 +456,12 @@ async function debugAlarms() {
       }
       
       console.log('🔍 Alarm debug completed. Check the background script console for detailed information.');
+    } else {
+      throw new Error(response?.error || 'Debug failed');
     }
   } catch (error) {
     console.error('❌ Error debugging alarms:', error);
     
-    // Reset button
     const debugBtn = document.getElementById('debugBtn');
     debugBtn.textContent = '❌ Debug Failed';
     debugBtn.disabled = false;
@@ -452,42 +471,28 @@ async function debugAlarms() {
       debugBtn.disabled = false;
     }, 3000);
     
-    // Show error status
-    const statusElement = document.getElementById('extensionStatus');
-    if (statusElement) {
-      statusElement.innerHTML = `
-        <div class="status-error">
-          <p><strong>Debug Failed:</strong> ❌ ${error.message}</p>
-          <p><strong>Check Console:</strong> Look for error messages in the popup console</p>
-        </div>
-      `;
-      statusElement.style.display = 'block';
-    }
+    showErrorMessage(`Alarm debug failed: ${error.message}`);
   }
 }
 
-// CRITICAL: Add storage debugging function
+// Debug storage
 async function debugStorage() {
   try {
-    // Disable button temporarily
     const storageDebugBtn = document.getElementById('storageDebugBtn');
     storageDebugBtn.disabled = true;
     storageDebugBtn.textContent = 'Debugging...';
     
     console.log('💾 Starting storage debug...');
     
-    // Send debug message to background script
     const response = await chrome.runtime.sendMessage({ action: 'debugStorage' });
     
     if (response && response.success) {
-      // Update button text temporarily
       storageDebugBtn.textContent = '✅ Debug Complete!';
       setTimeout(() => {
         storageDebugBtn.textContent = '💾 Debug Storage';
         storageDebugBtn.disabled = false;
       }, 3000);
       
-      // Show debug message
       const statusElement = document.getElementById('extensionStatus');
       if (statusElement) {
         statusElement.innerHTML = `
@@ -507,11 +512,12 @@ async function debugStorage() {
       setTimeout(() => {
         loadLastAyah();
       }, 2000);
+    } else {
+      throw new Error(response?.error || 'Storage debug failed');
     }
   } catch (error) {
     console.error('❌ Error debugging storage:', error);
     
-    // Reset button
     const storageDebugBtn = document.getElementById('storageDebugBtn');
     storageDebugBtn.textContent = '❌ Debug Failed';
     storageDebugBtn.disabled = false;
@@ -521,16 +527,6 @@ async function debugStorage() {
       storageDebugBtn.disabled = false;
     }, 3000);
     
-    // Show error status
-    const statusElement = document.getElementById('extensionStatus');
-    if (statusElement) {
-      statusElement.innerHTML = `
-        <div class="status-error">
-          <p><strong>Storage Debug Failed:</strong> ❌ ${error.message}</p>
-          <p><strong>Check Console:</strong> Look for error messages in the popup console</p>
-        </div>
-      `;
-      statusElement.style.display = 'block';
-    }
+    showErrorMessage(`Storage debug failed: ${error.message}`);
   }
 }

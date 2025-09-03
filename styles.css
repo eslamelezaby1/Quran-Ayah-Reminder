@@ -76,6 +76,18 @@ body {
   padding: 16px 20px;
   background: #D5D2BD;
   border-top: 1px solid rgba(141, 102, 61, 0.1);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .container .status-section h3 {
@@ -108,6 +120,36 @@ body {
 
 .container .status-error strong {
   color: #A0522D;
+}
+
+/* Enhanced error message styling */
+.container .status-error {
+  background: rgba(244, 164, 96, 0.1);
+  border: 1px solid rgba(244, 164, 96, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.container .status-error p {
+  margin-bottom: 4px;
+  color: #A0522D;
+  font-weight: 500;
+}
+
+.container .status-error p:last-child {
+  margin-bottom: 0;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* Status info styling */
+.container .status-info {
+  background: rgba(141, 102, 61, 0.1);
+  border: 1px solid rgba(141, 102, 61, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
 }
 
 /* Debug buttons - Simplified */

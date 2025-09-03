@@ -45,6 +45,7 @@ let usedAyahs = new Set();
 let lastAyahHash = '';
 let lastWakeTime = Date.now();
 let isInitialized = false;
+let healthCheckInterval = null;
 
 // CRITICAL: Initialize extension immediately when service worker starts
 console.log('Ayah Reminder service worker starting...');
@@ -71,6 +72,9 @@ async function initializeExtension() {
   
   try {
     console.log('🚀 Initializing extension...');
+    
+    // Check notification permissions first
+    await checkNotificationPermissions();
     
     // Check if we need to initialize settings
     const result = await chrome.storage.sync.get(['interval']);
@@ -124,6 +128,9 @@ async function initializeExtension() {
       // Continue initialization anyway - the health check will try to fix this
     }
     
+    // Start health check
+    startHealthCheck();
+    
     isInitialized = true;
     console.log('✅ Extension initialization complete');
   } catch (error) {
@@ -144,141 +151,286 @@ async function initializeExtension() {
   }
 }
 
-// Handle alarms
+// Check notification permissions
+async function checkNotificationPermissions() {
+  try {
+    const permissions = await chrome.permissions.getAll();
+    console.log('Current permissions:', permissions);
+    
+    if (!permissions.permissions || !permissions.permissions.includes('notifications')) {
+      console.error('❌ Notification permission not granted');
+      throw new Error('Notification permission required');
+    }
+    
+    console.log('✅ Notification permissions verified');
+  } catch (error) {
+    console.error('❌ Error checking notification permissions:', error);
+    throw error;
+  }
+}
+
+// Handle alarms - IMPROVED with better error handling
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === 'quran-ayah-reminder') {
-    console.log('Ayah alarm triggered, sending notification...');
-    await sendAyahNotification();
+    console.log('🔔 Ayah alarm triggered!');
     
-    // Verify next alarm is scheduled
-    setTimeout(async () => {
-      const nextAlarm = await chrome.alarms.get('quran-ayah-reminder');
-      if (!nextAlarm) {
-        console.log('Next alarm missing after notification, recreating...');
-        await scheduleAyahAlarm();
+    try {
+      // Check if it's actually time for a notification
+      const result = await chrome.storage.sync.get(['lastAyahTime', 'interval']);
+      const lastAyahTime = result.lastAyahTime;
+      const interval = result.interval || DEFAULT_SETTINGS.interval;
+      const now = Date.now();
+      
+      if (lastAyahTime) {
+        const timeSinceLastAyah = now - lastAyahTime;
+        const intervalMs = interval * 60 * 1000;
+        
+        console.log(`Timer check: ${timeSinceLastAyah}ms since last ayah, interval: ${intervalMs}ms`);
+        
+        // Only send notification if enough time has passed
+        if (timeSinceLastAyah >= intervalMs) {
+          console.log('✅ Timer expired, sending notification');
+          await sendAyahNotification();
+        } else {
+          console.log('⚠️ Timer not expired yet, rescheduling alarm');
+        }
+      } else {
+        console.log('✅ No last ayah time, sending notification');
+        await sendAyahNotification();
       }
-    }, 1000);
+      
+      // Always schedule next alarm
+      await scheduleAyahAlarm();
+      
+      console.log('✅ Notification sent and next alarm scheduled');
+    } catch (error) {
+      console.error('❌ Error handling alarm:', error);
+      
+      // Try to recover by scheduling next alarm
+      try {
+        await scheduleAyahAlarm();
+      } catch (scheduleError) {
+        console.error('❌ Failed to schedule recovery alarm:', scheduleError);
+      }
+      
+      // Try to send a fallback notification
+      try {
+        const fallbackAyah = getRandomFallbackAyah();
+        await showAyahNotification(fallbackAyah, false);
+        console.log('✅ Fallback notification sent');
+      } catch (fallbackError) {
+        console.error('❌ Failed to send fallback notification:', fallbackError);
+      }
+    }
   }
 });
 
 // Handle notification clicks
 chrome.notifications.onClicked.addListener(async (notificationId) => {
   if (notificationId === 'quran-ayah') {
-    // Get the last ayah from storage
-    const result = await chrome.storage.sync.get(['lastAyah']);
-    if (result.lastAyah && result.lastAyah.number) {
-      // Open the ayah on Quran.com
-      const url = `https://quran.com/${result.lastAyah.number}`;
-      await chrome.tabs.create({ url });
+    try {
+      const result = await chrome.storage.sync.get(['lastAyah']);
+      if (result.lastAyah && result.lastAyah.number) {
+        const url = `https://quran.com/${result.lastAyah.number}`;
+        await chrome.tabs.create({ url });
+      }
+    } catch (error) {
+      console.error('❌ Error opening ayah link:', error);
+    }
+  }
+});
+
+// Handle notification permission changes
+chrome.permissions.onRemoved.addListener(async (permissions) => {
+  if (permissions.permissions && permissions.permissions.includes('notifications')) {
+    console.log('❌ Notification permission removed');
+    // Try to re-request permission
+    try {
+      await chrome.permissions.request({ permissions: ['notifications'] });
+      console.log('✅ Notification permission re-granted');
+    } catch (error) {
+      console.error('❌ Failed to re-request notification permission:', error);
     }
   }
 });
 
 // Handle messages from popup and options
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // This ensures the service worker stays active
   if (request.action === 'ping') {
     sendResponse({ status: 'active', initialized: isInitialized });
     return true;
   }
   
   if (request.action === 'sendAyahNow') {
-    sendAyahNotification();
-    sendResponse({ success: true });
+    sendAyahNotification().then(() => {
+      sendResponse({ success: true });
+    }).catch((error) => {
+      console.error('❌ Error sending ayah now:', error);
+      sendResponse({ success: false, error: error.message });
+    });
+    return true;
   } else if (request.action === 'testNotification') {
-    sendAyahNotification(true);
-    sendResponse({ success: true });
+    sendAyahNotification(true).then(() => {
+      sendResponse({ success: true });
+    }).catch((error) => {
+      console.error('❌ Error sending test notification:', error);
+      sendResponse({ success: false, error: error.message });
+    });
+    return true;
   } else if (request.action === 'getSettings') {
     chrome.storage.sync.get(['interval'], (result) => {
       sendResponse(result);
     });
-    return true; // Keep message channel open for async response
+    return true;
   } else if (request.action === 'updateSettings') {
     chrome.storage.sync.set(request.settings, () => {
-      scheduleAyahAlarm();
-      sendResponse({ success: true });
+      scheduleAyahAlarm().then(() => {
+        sendResponse({ success: true });
+      }).catch((error) => {
+        console.error('❌ Error scheduling alarm after settings update:', error);
+        sendResponse({ success: false, error: error.message });
+      });
     });
     return true;
   } else if (request.action === 'forceNewAyah') {
-    getNewAyahIfNeeded(true);
-    sendResponse({ success: true });
+    getNewAyahIfNeeded(true).then(() => {
+      sendResponse({ success: true });
+    }).catch((error) => {
+      console.error('❌ Error forcing new ayah:', error);
+      sendResponse({ success: false, error: error.message });
+    });
+    return true;
   } else if (request.action === 'checkWakeUp') {
-    // Check if system woke up and handle timer reset
-    handleWakeUp();
-    sendResponse({ success: true });
+    handleWakeUp().then(() => {
+      sendResponse({ success: true });
+    }).catch((error) => {
+      console.error('❌ Error checking wake-up:', error);
+      sendResponse({ success: false, error: error.message });
+    });
+    return true;
   } else if (request.action === 'getStatus') {
-    // Return extension status for debugging
     sendResponse({ 
       initialized: isInitialized, 
-      timestamp: Date.now(),
-      lastWakeTime: lastWakeTime
+      timestamp: Date.now()
     });
   } else if (request.action === 'debugAlarms') {
-    // CRITICAL: Add debug alarm action
-    debugAlarmStatus();
-    sendResponse({ success: true, message: 'Alarm debug started - check console' });
+    debugAlarmStatus().then(() => {
+      sendResponse({ success: true, message: 'Alarm debug started - check console' });
+    }).catch((error) => {
+      console.error('❌ Error debugging alarms:', error);
+      sendResponse({ success: false, error: error.message });
+    });
+    return true;
   } else if (request.action === 'debugStorage') {
-    // CRITICAL: Add debug storage action
-    debugAndRepairStorage();
-    sendResponse({ success: true, message: 'Storage debug started - check console' });
+    debugAndRepairStorage().then(() => {
+      sendResponse({ success: true, message: 'Storage debug started - check console' });
+    }).catch((error) => {
+      console.error('❌ Error debugging storage:', error);
+      sendResponse({ success: false, error: error.message });
+    });
+    return true;
+  } else if (request.action === 'checkTimerExpired') {
+    checkTimerExpired().then((expired) => {
+      sendResponse({ expired: expired });
+    }).catch((error) => {
+      console.error('❌ Error checking timer expiration:', error);
+      sendResponse({ expired: false, error: error.message });
+    });
+    return true;
   }
 });
 
-// CRITICAL: Add periodic health check to ensure extension stays active
-setInterval(async () => {
-  try {
-    console.log('🔍 Performing health check...');
-    
-    // Check if our alarm still exists and is working
-    const alarm = await chrome.alarms.get('quran-ayah-reminder');
-    if (!alarm) {
-      console.log('❌ Alarm missing, recreating...');
-      await scheduleAyahAlarm();
-    } else {
-      console.log('✅ Health check: Alarm is active');
-      console.log('📅 Next alarm at:', new Date(alarm.scheduledTime).toLocaleString());
+// Start health check to ensure extension stays active
+function startHealthCheck() {
+  if (healthCheckInterval) {
+    clearInterval(healthCheckInterval);
+  }
+  
+  healthCheckInterval = setInterval(async () => {
+    try {
+      console.log('🔍 Performing health check...');
       
-      // Additional verification: check if alarm is scheduled in the future
-      const now = Date.now();
-      if (alarm.scheduledTime && alarm.scheduledTime < now) {
-        console.log('⚠️ Alarm is in the past, rescheduling...');
+      // Check if our alarm still exists and is working
+      const alarm = await chrome.alarms.get('quran-ayah-reminder');
+      if (!alarm) {
+        console.log('❌ Alarm missing, recreating...');
         await scheduleAyahAlarm();
-      } else if (alarm.scheduledTime) {
-        const timeUntilAlarm = alarm.scheduledTime - now;
-        console.log(`⏰ Time until next alarm: ${Math.floor(timeUntilAlarm / 60000)} minutes`);
+      } else {
+        console.log('✅ Health check: Alarm is active');
+        console.log('📅 Next alarm at:', new Date(alarm.scheduledTime).toLocaleString());
+        
+        // Additional verification: check if alarm is scheduled in the future
+        const now = Date.now();
+        if (alarm.scheduledTime && alarm.scheduledTime < now) {
+          console.log('⚠️ Alarm is in the past, rescheduling...');
+          await scheduleAyahAlarm();
+        } else if (alarm.scheduledTime) {
+          const timeUntilAlarm = alarm.scheduledTime - now;
+          console.log(`⏰ Time until next alarm: ${Math.floor(timeUntilAlarm / 60000)} minutes`);
+        }
+      }
+      
+      // Check if timer has expired and send notification if needed
+      const expired = await checkTimerExpired();
+      if (expired) {
+        console.log('⏰ Timer expired during health check, sending notification');
+        await sendAyahNotification();
+        await scheduleAyahAlarm();
+      }
+      
+      // Verify extension is still initialized
+      if (!isInitialized) {
+        console.log('⚠️ Extension not initialized, reinitializing...');
+        await initializeExtension();
+      }
+      
+      // Send ping to keep service worker alive
+      chrome.runtime.sendMessage({ action: 'ping' }).catch(() => {
+        // Ignore errors, this is just to keep the service worker active
+      });
+      
+      console.log('✅ Health check completed successfully');
+    } catch (error) {
+      console.error('❌ Health check failed:', error);
+      console.error('🔍 Health check error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      
+      // Try to recover
+      try {
+        console.log('🔄 Attempting recovery from health check failure...');
+        await scheduleAyahAlarm();
+        console.log('✅ Recovery attempt completed');
+      } catch (recoveryError) {
+        console.error('❌ Recovery attempt failed:', recoveryError.message);
       }
     }
+  }, 30000); // Check every 30 seconds instead of every minute
+}
+
+// Check if timer has expired
+async function checkTimerExpired() {
+  try {
+    const result = await chrome.storage.sync.get(['lastAyahTime', 'interval']);
+    const lastAyahTime = result.lastAyahTime;
+    const interval = result.interval || DEFAULT_SETTINGS.interval;
     
-    // Verify extension is still initialized
-    if (!isInitialized) {
-      console.log('⚠️ Extension not initialized, reinitializing...');
-      await initializeExtension();
+    if (!lastAyahTime) {
+      return true; // No last ayah time, consider it expired
     }
     
-    // Send ping to keep service worker alive
-    chrome.runtime.sendMessage({ action: 'ping' }).catch(() => {
-      // Ignore errors, this is just to keep the service worker active
-    });
+    const now = Date.now();
+    const timeSinceLastAyah = now - lastAyahTime;
+    const intervalMs = interval * 60 * 1000;
     
-    console.log('✅ Health check completed successfully');
+    return timeSinceLastAyah >= intervalMs;
   } catch (error) {
-    console.error('❌ Health check failed:', error);
-    console.error('🔍 Health check error details:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    });
-    
-    // Try to recover
-    try {
-      console.log('🔄 Attempting recovery from health check failure...');
-      await scheduleAyahAlarm();
-      console.log('✅ Recovery attempt completed');
-    } catch (recoveryError) {
-      console.error('❌ Recovery attempt failed:', recoveryError.message);
-    }
+    console.error('❌ Error checking timer expiration:', error);
+    return false;
   }
-}, 60000); // Check every minute
+}
 
 // Handle system wake-up
 async function handleWakeUp() {
@@ -332,7 +484,7 @@ chrome.runtime.onStartup.addListener(async () => {
   await handleWakeUp();
 });
 
-// Schedule the ayah alarm
+// Schedule the ayah alarm - IMPROVED
 async function scheduleAyahAlarm() {
   try {
     console.log('🔔 Starting alarm scheduling...');
