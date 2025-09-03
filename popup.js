@@ -378,9 +378,9 @@ async function checkExtensionStatus() {
       if (statusElement) {
         statusElement.innerHTML = `
           <div class="status-info">
-            <p><strong>Status:</strong> ${response.initialized ? '✅ Active' : '❌ Not Initialized'}</p>
-            <p><strong>Last Check:</strong> ${new Date(response.timestamp).toLocaleString()}</p>
-            <p><strong>Last Wake:</strong> ${new Date(response.lastWakeTime).toLocaleString()}</p>
+            <!-- <p><strong>Status:</strong> ${response.initialized ? '✅ Active' : '❌ Not Initialized'}</p> -->
+            <!-- <p><strong>Last Check:</strong> ${new Date(response.timestamp).toLocaleString()}</p> -->
+            <!-- <p><strong>Last Wake:</strong> ${new Date(response.lastWakeTime).toLocaleString()}</p> -->
           </div>
         `;
         statusElement.style.display = 'block';
