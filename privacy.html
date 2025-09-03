@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Ayah Reminder</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .privacy-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #FEFBE1;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(141, 102, 61, 0.08);
+    }
+    
+    .privacy-header {
+      background: #8D663D;
+      color: #FEFBE1;
+      padding: 24px 20px;
+      text-align: center;
+      border-radius: 16px 16px 0 0;
+      margin: -20px -20px 20px -20px;
+    }
+    
+    .privacy-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .privacy-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .privacy-content {
+      padding: 0 20px 20px 20px;
+    }
+    
+    .privacy-section {
+      margin-bottom: 30px;
+    }
+    
+    .privacy-section h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #8D663D;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #D5D2BD;
+      padding-bottom: 8px;
+    }
+    
+    .privacy-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #8D663D;
+      margin: 20px 0 10px 0;
+    }
+    
+    .privacy-section p {
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    
+    .privacy-section ul {
+      margin: 12px 0;
+      padding-left: 20px;
+    }
+    
+    .privacy-section li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    
+    .highlight-box {
+      background: #D5D2BD;
+      border-left: 4px solid #8D663D;
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .contact-info {
+      background: #8D663D;
+      color: #FEFBE1;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-top: 30px;
+    }
+    
+    .contact-info h3 {
+      color: #FEFBE1;
+      margin-bottom: 10px;
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #8D663D;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 16px;
+      border: 2px solid #8D663D;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .back-link:hover {
+      background: #8D663D;
+      color: #FEFBE1;
+    }
+  </style>
+</head>
+<body>
+  <div class="privacy-container">
+    <div class="privacy-header">
+      <h1>🔒 Privacy Policy</h1>
+      <p>Ayah Reminder Chrome Extension</p>
+    </div>
+    
+    <div class="privacy-content">
+      <div class="privacy-section">
+        <h2>📋 Overview</h2>
+        <p>This Privacy Policy describes how the Ayah Reminder Chrome extension ("we", "our", or "us") collects, uses, and protects your information when you use our extension. We are committed to protecting your privacy and ensuring transparency about our data practices.</p>
+        
+        <div class="highlight-box">
+          <strong>Last Updated:</strong> December 2024<br>
+          <strong>Extension Version:</strong> 1.0.0
+        </div>
+      </div>
+      
+      <div class="privacy-section">
+        <h2>📊 Information We Collect</h2>
+        
+        <h3>Local Storage Data</h3>
+        <p>We store the following information locally on your device:</p>
+        <ul>
+          <li><strong>User Preferences:</strong> Your chosen reminder interval (e.g., every 10 minutes, 30 minutes, etc.)</li>
+          <li><strong>Extension Settings:</strong> Configuration options for the reminder functionality</li>
+          <li><strong>Last Ayah Information:</strong> Details about the most recently displayed Quran verse</li>
+          <li><strong>Alarm Schedules:</strong> Timing information for scheduled reminders</li>
+        </ul>
+        
+        <h3>No Personal Data Collection</h3>
+        <p>We do not collect, store, or transmit any personal information such as:</p>
+        <ul>
+          <li>Your name, email address, or contact information</li>
+          <li>Browsing history or website data</li>
+          <li>Personal files or documents</li>
+          <li>Location information</li>
+        </ul>
+      </div>
+      
+      <div class="privacy-section">
+        <h2>🌐 External API Usage</h2>
+        
+        <h3>Quran API (api.alquran.cloud)</h3>
+        <p>Our extension fetches Quran verses from the public API at api.alquran.cloud. When making requests:</p>
+        <ul>
+          <li>We only request random Quran verses and their translations</li>
+          <li>No personal information is sent to this API</li>
+          <li>We do not store or cache the API responses</li>
+          <li>If the API is unavailable, we use embedded fallback verses</li>
+        </ul>
+        
+        <div class="highlight-box">
+          <strong>Note:</strong> The Quran API is a third-party service. We recommend reviewing their privacy policy at <a href="https://alquran.cloud" target="_blank" style="color: #8D663D;">alquran.cloud</a> for information about their data practices.
+        </div>
+      </div>
+      
+      <div class="privacy-section">
+        <h2>🔧 Extension Permissions</h2>
+        
+        <p>Our extension requests the following permissions and here's why:</p>
+        
+        <h3>Required Permissions</h3>
+        <ul>
+          <li><strong>notifications:</strong> To display Quran verse reminders as desktop notifications</li>
+          <li><strong>storage:</strong> To save your reminder interval preferences locally</li>
+          <li><strong>alarms:</strong> To schedule periodic reminders based on your chosen interval</li>
+        </ul>
+        
+        <h3>Host Permissions</h3>
+        <ul>
+          <li><strong>https://api.alquran.cloud/*:</strong> To fetch Quran verses from the public API</li>
+        </ul>
+        
+        <div class="highlight-box">
+          <strong>Important:</strong> We only use these permissions for the stated purposes. We do not access any other websites, read your emails, or access any other personal data.
+        </div>
+      </div>
+      
+      <div class="privacy-section">
+        <h2>🔒 Data Security</h2>
+        
+        <h3>Local Storage</h3>
+        <p>All your data is stored locally on your device using Chrome's extension storage API. This means:</p>
+        <ul>
+          <li>Your data never leaves your device</li>
+          <li>We cannot access your stored preferences</li>
+          <li>Data is automatically encrypted by Chrome</li>
+          <li>Data persists only as long as the extension is installed</li>
+        </ul>
+        
+        <h3>No Data Transmission</h3>
+        <p>We do not transmit, sell, or share any user data with third parties, except for the necessary API calls to fetch Quran verses.</p>
+      </div>
+      
+      <div class="privacy-section">
+        <h2>📱 Data Retention</h2>
+        
+        <p>Your data retention is handled as follows:</p>
+        <ul>
+          <li><strong>Local Storage:</strong> Data persists until you uninstall the extension or clear browser data</li>
+          <li><strong>API Requests:</strong> No data is retained from API calls</li>
+          <li><strong>Notifications:</strong> Notification content is not stored</li>
+        </ul>
+      </div>
+      
+      <div class="privacy-section">
+        <h2>👥 Your Rights</h2>
+        
+        <p>You have the following rights regarding your data:</p>
+        <ul>
+          <li><strong>Access:</strong> You can view your stored preferences in the extension's options page</li>
+          <li><strong>Modify:</strong> You can change your reminder interval at any time</li>
+          <li><strong>Delete:</strong> Uninstalling the extension removes all stored data</li>
+          <li><strong>Disable:</strong> You can disable notifications or the entire extension</li>
+        </ul>
+      </div>
+      
+      <div class="privacy-section">
+        <h2>🔄 Changes to This Policy</h2>
+        
+        <p>We may update this Privacy Policy from time to time. When we do:</p>
+        <ul>
+          <li>We will update the "Last Updated" date at the top of this policy</li>
+          <li>Changes will be reflected in new extension versions</li>
+          <li>We recommend reviewing this policy periodically</li>
+        </ul>
+      </div>
+      
+      <div class="contact-info">
+        <h3>📧 Contact Us</h3>
+        <p>If you have any questions about this Privacy Policy or our data practices, please contact us through the extension's GitHub repository or by reviewing the extension's source code.</p>
+      </div>
+      
+      <div style="text-align: center;">
+        <a href="#" id="backToExtension" class="back-link">← Back to Extension</a>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Handle back button
+    document.getElementById('backToExtension').addEventListener('click', function(e) {
+      e.preventDefault();
+      if (chrome.runtime && chrome.runtime.getURL) {
+        window.location.href = chrome.runtime.getURL('popup.html');
+      } else {
+        window.close();
+      }
+    });
+  </script>
+</body>
+</html>
