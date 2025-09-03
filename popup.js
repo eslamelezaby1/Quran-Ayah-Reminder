@@ -31,23 +31,33 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupEventListeners() {
   // Send ayah now button
   const sendNowBtn = document.getElementById('sendNowBtn');
-  sendNowBtn.addEventListener('click', sendAyahNow);
+  if (sendNowBtn) {
+    sendNowBtn.addEventListener('click', sendAyahNow);
+  }
   
   // New ayah button
   const newAyahBtn = document.getElementById('newAyahBtn');
-  newAyahBtn.addEventListener('click', forceNewAyah);
+  if (newAyahBtn) {
+    newAyahBtn.addEventListener('click', forceNewAyah);
+  }
   
   // Options button
   const optionsBtn = document.getElementById('optionsBtn');
-  optionsBtn.addEventListener('click', openOptions);
+  if (optionsBtn) {
+    optionsBtn.addEventListener('click', openOptions);
+  }
   
-  // Debug button
+  // Debug button (only if element exists)
   const debugBtn = document.getElementById('debugBtn');
-  debugBtn.addEventListener('click', debugAlarms);
+  if (debugBtn) {
+    debugBtn.addEventListener('click', debugAlarms);
+  }
   
-  // Storage debug button
+  // Storage debug button (only if element exists)
   const storageDebugBtn = document.getElementById('storageDebugBtn');
-  storageDebugBtn.addEventListener('click', debugStorage);
+  if (storageDebugBtn) {
+    storageDebugBtn.addEventListener('click', debugStorage);
+  }
 }
 
 // Send ayah now
