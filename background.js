@@ -43,25 +43,80 @@ const DEFAULT_SETTINGS = {
 // Track used ayahs to avoid repetition
 let usedAyahs = new Set();
 let lastAyahHash = '';
+let lastWakeTime = Date.now();
+let isInitialized = false;
+
+// CRITICAL: Initialize extension immediately when service worker starts
+console.log('Quran Ayah Reminder service worker starting...');
+initializeExtension();
 
 // Initialize extension on install
 chrome.runtime.onInstalled.addListener(async (details) => {
-  if (details.reason === 'install') {
-    console.log('Quran Ayah Reminder installed');
-    
-    // Set default settings
-    await chrome.storage.sync.set(DEFAULT_SETTINGS);
-    
-    // Schedule first alarm and get initial ayah
-    await scheduleAyahAlarm();
-    await getNewAyahIfNeeded();
-  }
+  console.log('Extension installed or updated:', details.reason);
+  await initializeExtension();
 });
+
+// CRITICAL: Add startup event listener for when Chrome first opens
+chrome.runtime.onStartup.addListener(async () => {
+  console.log('Chrome started up - initializing Quran Ayah Reminder');
+  await initializeExtension();
+});
+
+// CRITICAL: Add initialization function
+async function initializeExtension() {
+  if (isInitialized) {
+    console.log('Extension already initialized, skipping...');
+    return;
+  }
+  
+  try {
+    console.log('Initializing extension...');
+    
+    // Check if we need to initialize settings
+    const result = await chrome.storage.sync.get(['interval']);
+    if (!result.interval) {
+      console.log('No settings found, setting defaults');
+      await chrome.storage.sync.set(DEFAULT_SETTINGS);
+    }
+    
+    // Check if we need an initial ayah
+    const ayahResult = await chrome.storage.sync.get(['lastAyah']);
+    if (!ayahResult.lastAyah) {
+      console.log('No ayah found, getting initial ayah');
+      await getNewAyahIfNeeded();
+    }
+    
+    // Schedule alarm
+    await scheduleAyahAlarm();
+    
+    isInitialized = true;
+    console.log('Extension initialization complete');
+  } catch (error) {
+    console.error('Error during extension initialization:', error);
+    // Try again in a few seconds
+    setTimeout(() => {
+      if (!isInitialized) {
+        console.log('Retrying initialization...');
+        initializeExtension();
+      }
+    }, 5000);
+  }
+}
 
 // Handle alarms
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === 'quran-ayah-reminder') {
+    console.log('Ayah alarm triggered, sending notification...');
     await sendAyahNotification();
+    
+    // Verify next alarm is scheduled
+    setTimeout(async () => {
+      const nextAlarm = await chrome.alarms.get('quran-ayah-reminder');
+      if (!nextAlarm) {
+        console.log('Next alarm missing after notification, recreating...');
+        await scheduleAyahAlarm();
+      }
+    }, 1000);
   }
 });
 
@@ -80,6 +135,12 @@ chrome.notifications.onClicked.addListener(async (notificationId) => {
 
 // Handle messages from popup and options
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // This ensures the service worker stays active
+  if (request.action === 'ping') {
+    sendResponse({ status: 'active', initialized: isInitialized });
+    return true;
+  }
+  
   if (request.action === 'sendAyahNow') {
     sendAyahNotification();
     sendResponse({ success: true });
@@ -100,35 +161,169 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === 'forceNewAyah') {
     getNewAyahIfNeeded(true);
     sendResponse({ success: true });
+  } else if (request.action === 'checkWakeUp') {
+    // Check if system woke up and handle timer reset
+    handleWakeUp();
+    sendResponse({ success: true });
+  } else if (request.action === 'getStatus') {
+    // Return extension status for debugging
+    sendResponse({ 
+      initialized: isInitialized, 
+      timestamp: Date.now(),
+      lastWakeTime: lastWakeTime
+    });
+  } else if (request.action === 'debugAlarms') {
+    // CRITICAL: Add debug alarm action
+    debugAlarmStatus();
+    sendResponse({ success: true, message: 'Alarm debug started - check console' });
+  } else if (request.action === 'debugStorage') {
+    // CRITICAL: Add debug storage action
+    debugAndRepairStorage();
+    sendResponse({ success: true, message: 'Storage debug started - check console' });
   }
+});
+
+// CRITICAL: Add periodic health check to ensure extension stays active
+setInterval(async () => {
+  try {
+    // Check if our alarm still exists and is working
+    const alarm = await chrome.alarms.get('quran-ayah-reminder');
+    if (!alarm) {
+      console.log('Alarm missing, recreating...');
+      await scheduleAyahAlarm();
+    } else {
+      console.log('Health check: Alarm is active, next at:', new Date(alarm.scheduledTime).toLocaleString());
+      
+      // Additional verification: check if alarm is scheduled in the future
+      const now = Date.now();
+      if (alarm.scheduledTime && alarm.scheduledTime < now) {
+        console.log('Alarm is in the past, rescheduling...');
+        await scheduleAyahAlarm();
+      }
+    }
+    
+    // Send ping to keep service worker alive
+    chrome.runtime.sendMessage({ action: 'ping' }).catch(() => {
+      // Ignore errors, this is just to keep the service worker active
+    });
+  } catch (error) {
+    console.error('Health check failed:', error);
+    // Try to recover
+    await scheduleAyahAlarm();
+  }
+}, 60000); // Check every minute
+
+// Handle system wake-up
+async function handleWakeUp() {
+  const now = Date.now();
+  const timeSinceLastWake = now - lastWakeTime;
+  
+  console.log(`Wake-up check: ${timeSinceLastWake}ms since last wake, threshold: ${5 * 60 * 1000}ms`);
+  
+  // If more than 5 minutes have passed since last wake, consider it a sleep cycle
+  if (timeSinceLastWake > 5 * 60 * 1000) {
+    console.log('System wake-up detected, checking timer status...');
+    
+    const result = await chrome.storage.sync.get(['lastAyahTime', 'interval']);
+    const lastAyahTime = result.lastAyahTime;
+    const interval = result.interval || DEFAULT_SETTINGS.interval;
+    
+    if (lastAyahTime) {
+      const timeSinceLastAyah = now - lastAyahTime;
+      const intervalMs = interval * 60 * 1000;
+      
+      console.log(`Timer check: ${timeSinceLastAyah}ms since last ayah, interval: ${intervalMs}ms`);
+      
+      // If it's time for a new ayah, send it immediately
+      if (timeSinceLastAyah >= intervalMs) {
+        console.log('Timer expired during sleep, sending ayah now');
+        await sendAyahNotification();
+      } else {
+        console.log('Timer still active, rescheduling alarm');
+        await scheduleAyahAlarm();
+      }
+    } else {
+      console.log('No last ayah time found, scheduling new alarm');
+      await scheduleAyahAlarm();
+    }
+  } else {
+    console.log('No significant time gap detected, normal operation');
+  }
+  
+  lastWakeTime = now;
+}
+
+// Handle extension suspend (when system goes to sleep)
+chrome.runtime.onSuspend.addListener(() => {
+  console.log('Extension suspending, system going to sleep...');
+  lastWakeTime = Date.now();
+});
+
+// Handle extension startup (when system wakes up)
+chrome.runtime.onStartup.addListener(async () => {
+  console.log('Extension started up, checking timer status...');
+  await handleWakeUp();
 });
 
 // Schedule the ayah alarm
 async function scheduleAyahAlarm() {
-  const result = await chrome.storage.sync.get(['interval']);
-  const interval = result.interval || DEFAULT_SETTINGS.interval;
-  
-  // Clear existing alarm
-  await chrome.alarms.clear('quran-ayah-reminder');
-  
-  // Create new alarm
-  await chrome.alarms.create('quran-ayah-reminder', {
-    delayInMinutes: interval,
-    periodInMinutes: interval
-  });
-  
-  console.log(`Ayah alarm scheduled for every ${interval} minutes`);
+  try {
+    const result = await chrome.storage.sync.get(['interval']);
+    const interval = result.interval || DEFAULT_SETTINGS.interval;
+    
+    // Clear existing alarm
+    await chrome.alarms.clear('quran-ayah-reminder');
+    
+    // Create new alarm with more reliable settings
+    await chrome.alarms.create('quran-ayah-reminder', {
+      delayInMinutes: interval,
+      periodInMinutes: interval
+    });
+    
+    // Verify alarm was created
+    const alarm = await chrome.alarms.get('quran-ayah-reminder');
+    if (alarm) {
+      console.log(`Ayah alarm scheduled successfully for every ${interval} minutes`);
+      console.log(`Next alarm at: ${new Date(Date.now() + interval * 60 * 1000).toLocaleString()}`);
+    } else {
+      console.error('Failed to create alarm');
+      // Try alternative approach with shorter delay
+      await chrome.alarms.create('quran-ayah-reminder', {
+        delayInMinutes: 1,
+        periodInMinutes: interval
+      });
+      console.log(`Alternative alarm scheduling attempted`);
+    }
+  } catch (error) {
+    console.error('Error scheduling alarm:', error);
+    // Fallback: try to create a simple alarm
+    try {
+      await chrome.alarms.create('quran-ayah-reminder', {
+        delayInMinutes: 1,
+        periodInMinutes: DEFAULT_SETTINGS.interval
+      });
+      console.log('Fallback alarm created');
+    } catch (fallbackError) {
+      console.error('Fallback alarm creation failed:', fallbackError);
+    }
+  }
 }
 
 // Check if we need a new ayah and get one if needed
 async function getNewAyahIfNeeded(force = false) {
   try {
-    console.log(`getNewAyahIfNeeded called with force=${force}`);
+    console.log(`🔍 getNewAyahIfNeeded called with force=${force}`);
     
     const result = await chrome.storage.sync.get(['lastAyah', 'lastAyahTime', 'interval']);
     const lastAyah = result.lastAyah;
     const lastAyahTime = result.lastAyahTime;
     const interval = result.interval || DEFAULT_SETTINGS.interval;
+    
+    console.log('📊 Current state:', {
+      lastAyah: lastAyah ? `${lastAyah.surah} ${lastAyah.ayah}` : 'None',
+      lastAyahTime: lastAyahTime ? new Date(lastAyahTime).toLocaleString() : 'None',
+      interval: interval
+    });
     
     const now = Date.now();
     const timeSinceLastAyah = lastAyahTime ? (now - lastAyahTime) : Infinity;
@@ -144,13 +339,21 @@ async function getNewAyahIfNeeded(force = false) {
                             timeSinceLastAyah >= intervalMs ||
                             isAyahRepeating(lastAyah);
     
+    console.log('🔍 Should get new ayah?', {
+      force,
+      noAyah: !lastAyah,
+      timeElapsed: timeSinceLastAyah >= intervalMs,
+      repeating: isAyahRepeating(lastAyah),
+      result: shouldGetNewAyah
+    });
+    
     if (shouldGetNewAyah) {
-      console.log('Getting new ayah...');
+      console.log('📖 Getting new ayah...');
       const newAyah = await fetchRandomAyah();
       
       if (newAyah) {
         // Save new ayah with timestamp
-        console.log('Saving new ayah to storage:', newAyah.surah, newAyah.ayah);
+        console.log('💾 Saving new ayah to storage:', newAyah.surah, newAyah.ayah);
         await chrome.storage.sync.set({ 
           lastAyah: newAyah,
           lastAyahTime: now
@@ -159,12 +362,14 @@ async function getNewAyahIfNeeded(force = false) {
         // Track this ayah to avoid repetition
         trackAyahUsage(newAyah);
         
-        console.log(`New ayah set: ${newAyah.surah} ${newAyah.ayah}`);
+        console.log(`✅ New ayah set: ${newAyah.surah} ${newAyah.ayah}`);
         return newAyah;
       } else {
         // Fallback to embedded ayat
-        console.log('API failed, using fallback ayah');
+        console.log('⚠️ API failed, using fallback ayah');
         const fallbackAyah = getRandomFallbackAyah();
+        console.log('💾 Saving fallback ayah to storage:', fallbackAyah.surah, fallbackAyah.ayah);
+        
         await chrome.storage.sync.set({ 
           lastAyah: fallbackAyah,
           lastAyahTime: now
@@ -173,23 +378,36 @@ async function getNewAyahIfNeeded(force = false) {
         // Track this ayah to avoid repetition
         trackAyahUsage(fallbackAyah);
         
-        console.log(`Fallback ayah set: ${fallbackAyah.surah} ${fallbackAyah.ayah}`);
+        console.log(`✅ Fallback ayah set: ${fallbackAyah.surah} ${fallbackAyah.ayah}`);
         return fallbackAyah;
       }
     } else {
       // Use existing ayah
-      console.log('Using existing ayah, time not elapsed yet');
+      console.log('📖 Using existing ayah, time not elapsed yet');
       return lastAyah;
     }
   } catch (error) {
-    console.error('Error in getNewAyahIfNeeded:', error);
+    console.error('❌ Error in getNewAyahIfNeeded:', error);
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
     
     // Fallback to embedded ayat
+    console.log('🆘 Emergency fallback to embedded ayah');
     const fallbackAyah = getRandomFallbackAyah();
-    await chrome.storage.sync.set({ 
-      lastAyah: fallbackAyah,
-      lastAyahTime: Date.now()
-    });
+    console.log('💾 Saving emergency fallback ayah:', fallbackAyah.surah, fallbackAyah.ayah);
+    
+    try {
+      await chrome.storage.sync.set({ 
+        lastAyah: fallbackAyah,
+        lastAyahTime: Date.now()
+      });
+      console.log('✅ Emergency fallback ayah saved');
+    } catch (storageError) {
+      console.error('❌ Failed to save emergency fallback ayah:', storageError);
+    }
     
     // Track this ayah to avoid repetition
     trackAyahUsage(fallbackAyah);
@@ -372,3 +590,112 @@ chrome.runtime.onUpdateAvailable.addListener(() => {
   usedAyahs.clear();
   lastAyahHash = '';
 });
+
+// CRITICAL: Add alarm debugging function
+async function debugAlarmStatus() {
+  try {
+    console.log('🔍 === ALARM DEBUG INFORMATION ===');
+    
+    // Check if we have the alarms permission
+    const permissions = await chrome.permissions.getAll();
+    console.log('Permissions:', permissions);
+    
+    // List all alarms
+    const allAlarms = await chrome.alarms.getAll();
+    console.log('All alarms in system:', allAlarms);
+    
+    // Check our specific alarm
+    const ourAlarm = await chrome.alarms.get('quran-ayah-reminder');
+    if (ourAlarm) {
+      console.log('✅ Our alarm found:', ourAlarm);
+      console.log('Alarm name:', ourAlarm.name);
+      console.log('Alarm delay:', ourAlarm.delayInMinutes, 'minutes');
+      console.log('Alarm period:', ourAlarm.periodInMinutes, 'minutes');
+      console.log('Scheduled time:', ourAlarm.scheduledTime ? new Date(ourAlarm.scheduledTime).toLocaleString() : 'Not set');
+      console.log('Is in future:', ourAlarm.scheduledTime ? (ourAlarm.scheduledTime > Date.now()) : 'Unknown');
+    } else {
+      console.log('❌ Our alarm not found');
+    }
+    
+    // Check storage for interval setting
+    const storage = await chrome.storage.sync.get(['interval']);
+    console.log('Storage interval setting:', storage.interval);
+    
+    // Check if service worker is active
+    console.log('Service worker active:', typeof chrome.runtime !== 'undefined');
+    console.log('Chrome alarms API available:', typeof chrome.alarms !== 'undefined');
+    
+    console.log('🔍 === END ALARM DEBUG ===');
+  } catch (error) {
+    console.error('❌ Error in alarm debug:', error);
+  }
+}
+
+// CRITICAL: Add storage debugging and repair function
+async function debugAndRepairStorage() {
+  try {
+    console.log('🔧 === STORAGE DEBUG AND REPAIR ===');
+    
+    // Check current storage state
+    const currentStorage = await chrome.storage.sync.get(null);
+    console.log('Current storage state:', currentStorage);
+    
+    // Check if we have the required data
+    const hasInterval = currentStorage.interval !== undefined;
+    const hasLastAyah = currentStorage.lastAyah !== undefined;
+    const hasLastAyahTime = currentStorage.lastAyahTime !== undefined;
+    
+    console.log('Storage health check:', {
+      hasInterval,
+      hasLastAyah,
+      hasLastAyahTime,
+      interval: currentStorage.interval,
+      lastAyah: currentStorage.lastAyah ? `${currentStorage.lastAyah.surah} ${currentStorage.lastAyah.ayah}` : 'None',
+      lastAyahTime: currentStorage.lastAyahTime ? new Date(currentStorage.lastAyahTime).toLocaleString() : 'None'
+    });
+    
+    // Repair missing data
+    let repairsMade = false;
+    
+    if (!hasInterval) {
+      console.log('🔧 Repairing missing interval setting...');
+      await chrome.storage.sync.set({ interval: DEFAULT_SETTINGS.interval });
+      repairsMade = true;
+    }
+    
+    if (!hasLastAyah || !hasLastAyahTime) {
+      console.log('🔧 Repairing missing ayah data...');
+      const newAyah = await getNewAyahIfNeeded(true);
+      if (newAyah) {
+        console.log('✅ Ayah data repaired');
+        repairsMade = true;
+      } else {
+        console.error('❌ Failed to repair ayah data');
+      }
+    }
+    
+    if (repairsMade) {
+      console.log('🔧 Storage repairs completed');
+      // Verify repair
+      const verifyStorage = await chrome.storage.sync.get(null);
+      console.log('Storage after repair:', verifyStorage);
+    } else {
+      console.log('✅ Storage is healthy, no repairs needed');
+    }
+    
+    console.log('🔧 === END STORAGE DEBUG AND REPAIR ===');
+    return repairsMade;
+  } catch (error) {
+    console.error('❌ Error in storage debug and repair:', error);
+    return false;
+  }
+}
+
+// CRITICAL: Add final initialization check after a delay
+// This ensures the extension is fully initialized even if early initialization fails
+setTimeout(async () => {
+  if (!isInitialized) {
+    console.log('Delayed initialization check - retrying...');
+    await initializeExtension();
+  }
+}, 10000); // Wait 10 seconds then check
