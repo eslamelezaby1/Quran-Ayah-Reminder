@@ -1,4 +1,4 @@
-# 📖 Quran Ayah Reminder
+# 📖 Ayah Reminder
 
 A Chrome extension that sends periodic notifications with random Quran verses to remind you of Allah's words throughout your day.
 
@@ -12,11 +12,12 @@ A Chrome extension that sends periodic notifications with random Quran verses to
 
 ## 🚀 Installation
 
-### From Chrome Web Store (Recommended)
+### From Chrome Web Store (When Available)
 1. Visit the Chrome Web Store
-2. Search for "Quran Ayah Reminder"
+2. Search for "Ayah Reminder"
 3. Click "Add to Chrome"
 4. Confirm the installation
+
 
 ### Manual Installation (Developer Mode)
 1. Download or clone this repository
@@ -61,7 +62,7 @@ A Chrome extension that sends periodic notifications with random Quran verses to
 Access settings by:
 1. Clicking the extension icon
 2. Clicking "Settings" button
-3. Or going to `chrome://extensions/` → Quran Ayah Reminder → "Extension options"
+3. Or going to `chrome://extensions/` → Ayah Reminder → "Extension options"
 
 ## 🛠️ Technical Details
 
@@ -117,7 +118,7 @@ Access settings by:
 
 **Extension not working after Chrome update:**
 - Go to `chrome://extensions/`
-- Find Quran Ayah Reminder
+- Find Ayah Reminder
 - Click "Reload" if needed
 
 **Settings not saving:**

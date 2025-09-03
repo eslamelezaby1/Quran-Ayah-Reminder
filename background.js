@@ -1,4 +1,4 @@
-// Quran Ayah Reminder - Background Service Worker
+// Ayah Reminder - Background Service Worker
 // Handles alarms, fetches ayahs, and shows notifications
 
 // Fallback ayat in case API fails
@@ -47,7 +47,7 @@ let lastWakeTime = Date.now();
 let isInitialized = false;
 
 // CRITICAL: Initialize extension immediately when service worker starts
-console.log('Quran Ayah Reminder service worker starting...');
+console.log('Ayah Reminder service worker starting...');
 initializeExtension();
 
 // Initialize extension on install
@@ -58,7 +58,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 // CRITICAL: Add startup event listener for when Chrome first opens
 chrome.runtime.onStartup.addListener(async () => {
-  console.log('Chrome started up - initializing Quran Ayah Reminder');
+  console.log('Chrome started up - initializing Ayah Reminder');
   await initializeExtension();
 });
 

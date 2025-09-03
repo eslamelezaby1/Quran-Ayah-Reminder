@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Quran Ayah Reminder",
+  "name": "Ayah Reminder",
   "version": "1.0.0",
   "description": "Shows random Quran ayah notifications periodically to remind you of Allah's words",
   "permissions": [
@@ -16,7 +16,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Quran Ayah Reminder",
+    "default_title": "Ayah Reminder",
     "default_icon": {
       "16": "assets/icon16.png",
       "48": "assets/icon48.png",

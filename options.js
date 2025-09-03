@@ -1,4 +1,4 @@
-// Quran Ayah Reminder - Options Script
+// Ayah Reminder - Options Script
 // Handles options page functionality and saves user settings
 
 document.addEventListener('DOMContentLoaded', function() {

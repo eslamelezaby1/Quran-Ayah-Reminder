@@ -1,4 +1,4 @@
-// Quran Ayah Reminder - Popup Script
+// Ayah Reminder - Popup Script
 // Handles popup functionality and displays last delivered ayah
 
 document.addEventListener('DOMContentLoaded', function() {
